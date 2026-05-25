@@ -2,7 +2,7 @@
 
 TYPO3 12.4 extension for DeepL V3 text and file translation in frontend content elements and backend modules.
 
-The extension provides the product UI, TYPO3 controllers, templates, local approval storage and frontend access handling. DeepL HTTP communication is delegated to `ppl/ppl-deepl-v3-requests`.
+The extension provides the product UI, TYPO3 controllers, templates and frontend access handling. DeepL HTTP communication and shared V3 approval storage are delegated to `ppl/ppl-deepl-v3-requests`.
 
 ## Features
 
@@ -27,7 +27,7 @@ This keeps the translate package focused on TYPO3 behavior:
 - Controllers and Fluid templates.
 - Backend modules and frontend plugins.
 - Validation and language/glossary/style-rule selection.
-- Local storage of approved data.
+- UI access to shared approved data.
 - Frontend login and logout handling.
 
 The request package owns the DeepL REST details:
@@ -163,15 +163,16 @@ TYPO3/felogin login page:
 
 Custom site header login links are outside of the extension redirect flow. If they should return to the protected DeepL page, they need their own valid redirect handling.
 
-## Local Storage
+## Shared Storage
 
-The extension stores approved metadata inside the TYPO3 var directory:
+Reusable DeepL V3 metadata is stored by `ppl_deepl_v3_requests` inside the TYPO3 var directory:
 
-- `var/ppl_deepl_v3_translate/languages.json`
-- `var/ppl_deepl_v3_translate/glossaries.json`
-- `var/ppl_deepl_v3_translate/style-rules.json`
+- `var/ppl_deepl_v3_requests/languages.json`
+- `var/ppl_deepl_v3_requests/glossaries.json`
+- `var/ppl_deepl_v3_requests/style-rules.json`
+- `var/ppl_deepl_v3_requests/custom-instructions.json`
 
-These files are runtime data. They should not be committed to the package repository.
+Existing files from `var/ppl_deepl_v3_translate/` are migrated by the request services on first read. New writes go to the request package storage path. These files are runtime data and should not be committed to package repositories.
 
 ## Security Notes
 
@@ -183,7 +184,7 @@ These files are runtime data. They should not be committed to the package reposi
 
 ## Release Line
 
-Version `12.4.0` is the TYPO3 12.4 release line.
+Version `12.4.x` is the TYPO3 12.4 release line.
 
 ## License
 

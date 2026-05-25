@@ -1,5 +1,11 @@
 # Changelog
 
+## 12.4.1
+
+- Delegated V3 language, glossary, style-rule and custom-instruction configuration to `ppl_deepl_v3_requests`.
+- Kept the existing Translate controllers and templates as product UI consumers of the shared request configuration.
+- Added migration-compatible shared storage documentation.
+
 ## 12.4.0
 
 - Release for TYPO3 12.4 LTS.

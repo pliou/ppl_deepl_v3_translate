@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Ppl\PplDeeplV3Translate\Service;
 
+use Ppl\PplDeeplV3Requests\Service\DeeplCustomInstructionConfigurationService;
 use Ppl\PplDeeplV3Translate\Service\Api\DeepLApiAdapterInterface;
 
 final class DeeplTranslationService
@@ -12,7 +13,8 @@ final class DeeplTranslationService
         private readonly DeeplLanguageService $languageService,
         private readonly DeeplGlossaryService $glossaryService,
         private readonly DeepLApiAdapterInterface $apiAdapter,
-        private readonly DeeplStyleRuleService $styleRuleService
+        private readonly DeeplStyleRuleService $styleRuleService,
+        private readonly DeeplCustomInstructionConfigurationService $customInstructionConfigurationService
     ) {}
 
     public function getApiCapabilities(): array
@@ -75,18 +77,6 @@ final class DeeplTranslationService
 
     private function normalizeCustomInstructions(array|string $customInstructions): array
     {
-        if (is_string($customInstructions)) {
-            $customInstructions = preg_split('/\R+/', $customInstructions) ?: [];
-        }
-
-        $instructions = [];
-        foreach ($customInstructions as $instruction) {
-            $instruction = trim((string)$instruction);
-            if ($instruction !== '') {
-                $instructions[] = substr($instruction, 0, 300);
-            }
-        }
-
-        return $instructions;
+        return $this->customInstructionConfigurationService->normalizeCustomInstructions($customInstructions);
     }
 }

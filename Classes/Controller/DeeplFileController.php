@@ -3,6 +3,7 @@
 namespace Ppl\PplDeeplV3Translate\Controller;
 
 use Ppl\PplDeeplV3Requests\Service\DeeplApiClientService;
+use Ppl\PplDeeplV3Requests\Service\DeeplCustomInstructionConfigurationService;
 use Ppl\PplDeeplV3Requests\Service\DeeplConfigurationService;
 use Ppl\PplDeeplV3Translate\Service\DeeplGlossaryService;
 use Ppl\PplDeeplV3Translate\Service\DeeplLanguageService;
@@ -30,7 +31,14 @@ class DeeplFileController extends ActionController
         $apiAdapter = GeneralUtility::makeInstance(V3RequestAdapter::class, $languageService, $apiClient);
         $glossaryService = GeneralUtility::makeInstance(DeeplGlossaryService::class, $languageService, $apiAdapter);
         $styleRuleService = GeneralUtility::makeInstance(DeeplStyleRuleService::class, $languageService, $apiClient);
-        $translationService = GeneralUtility::makeInstance(DeeplTranslationService::class, $languageService, $glossaryService, $apiAdapter, $styleRuleService);
+        $translationService = GeneralUtility::makeInstance(
+            DeeplTranslationService::class,
+            $languageService,
+            $glossaryService,
+            $apiAdapter,
+            $styleRuleService,
+            GeneralUtility::makeInstance(DeeplCustomInstructionConfigurationService::class)
+        );
         $configurationService = GeneralUtility::makeInstance(DeeplConfigurationService::class);
 
         $translatedFilePath = null;

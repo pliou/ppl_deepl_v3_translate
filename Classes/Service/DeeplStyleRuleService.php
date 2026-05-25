@@ -5,237 +5,82 @@ declare(strict_types=1);
 namespace Ppl\PplDeeplV3Translate\Service;
 
 use Ppl\PplDeeplV3Requests\Service\DeeplApiClientService;
-use TYPO3\CMS\Core\Core\Environment;
+use Ppl\PplDeeplV3Requests\Service\DeeplStyleRuleConfigurationService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 final class DeeplStyleRuleService
 {
-    private const STORAGE_DIRECTORY = 'ppl_deepl_v3_translate';
-    private const STORAGE_FILE = 'style-rules.json';
+    private ?DeeplStyleRuleConfigurationService $sharedStyleRuleConfigurationService;
 
     public function __construct(
-        private readonly DeeplLanguageService $languageService,
-        private readonly DeeplApiClientService $apiClient
-    ) {}
+        ?DeeplLanguageService $languageService = null,
+        ?DeeplApiClientService $apiClient = null,
+        ?DeeplStyleRuleConfigurationService $sharedStyleRuleConfigurationService = null
+    ) {
+        $this->sharedStyleRuleConfigurationService = $sharedStyleRuleConfigurationService;
+    }
 
     public function fetchRemoteStyleRules(string $authKey): array
     {
-        if (trim($authKey) === '') {
-            return [];
-        }
-
-        $response = $this->apiClient->listStyleRules($authKey);
-        $styleRules = $response['style_rules'] ?? [];
-        $normalizedStyleRules = [];
-
-        foreach ($styleRules as $styleRule) {
-            if (!is_array($styleRule)) {
-                continue;
-            }
-
-            $id = (string)($styleRule['style_id'] ?? '');
-            if ($id === '') {
-                continue;
-            }
-
-            $language = $this->languageService->normalizeStyleRuleLanguage((string)($styleRule['language'] ?? ''));
-
-            $normalizedStyleRules[] = [
-                'id' => $id,
-                'name' => (string)($styleRule['name'] ?? $id),
-                'language' => $language,
-                'version' => (int)($styleRule['version'] ?? 0),
-                'updatedTime' => (string)($styleRule['updated_time'] ?? ''),
-                'label' => trim((string)($styleRule['name'] ?? $id) . ($language !== '' ? ' (' . $language . ')' : '')),
-            ];
-        }
-
-        usort(
-            $normalizedStyleRules,
-            static fn(array $left, array $right): int => strcasecmp((string)$left['label'], (string)$right['label'])
-        );
-
-        return $normalizedStyleRules;
+        return $this->getSharedStyleRuleConfigurationService()->fetchRemoteStyleRules($authKey);
     }
 
     public function getSavedStyleRules(): array
     {
-        $storageFile = $this->getStorageFilePath();
-        if (!is_file($storageFile)) {
-            return [];
-        }
-
-        $data = json_decode((string)file_get_contents($storageFile), true);
-        if (!is_array($data)) {
-            return [];
-        }
-
-        $styleRules = $data['styleRules'] ?? [];
-
-        if (!is_array($styleRules)) {
-            return [];
-        }
-
-        return array_values(array_map(
-            static function (array $styleRule): array {
-                $styleRule['enabled'] = array_key_exists('enabled', $styleRule) ? (bool)$styleRule['enabled'] : true;
-
-                return $styleRule;
-            },
-            array_filter($styleRules, 'is_array')
-        ));
+        return $this->getSharedStyleRuleConfigurationService()->getSavedStyleRules();
     }
 
     public function saveSelectedStyleRules(array $remoteStyleRules, array $selectedIds): array
     {
-        return $this->saveStyleRules($remoteStyleRules, $selectedIds);
+        return $this->getSharedStyleRuleConfigurationService()->saveSelectedStyleRules($remoteStyleRules, $selectedIds);
     }
 
     public function saveStyleRules(array $remoteStyleRules, array $enabledIds): array
     {
-        $enabledLookup = array_fill_keys(array_map('strval', $enabledIds), true);
-        $savedStyleRules = [];
-
-        foreach ($remoteStyleRules as $styleRule) {
-            $id = (string)($styleRule['id'] ?? '');
-            if ($id === '') {
-                continue;
-            }
-
-            $styleRule['enabled'] = isset($enabledLookup[$id]);
-            $savedStyleRules[] = $styleRule;
-        }
-
-        $storageDirectory = dirname($this->getStorageFilePath());
-        if (!is_dir($storageDirectory)) {
-            GeneralUtility::mkdir_deep($storageDirectory);
-        }
-
-        file_put_contents(
-            $this->getStorageFilePath(),
-            json_encode(
-                [
-                    'savedAt' => (new \DateTimeImmutable())->format(DATE_ATOM),
-                    'styleRules' => $savedStyleRules,
-                ],
-                JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
-            )
-        );
-
-        return $savedStyleRules;
+        return $this->getSharedStyleRuleConfigurationService()->saveStyleRules($remoteStyleRules, $enabledIds);
     }
 
     public function getSelectedStyleRuleIds(): array
     {
-        return array_values(array_filter(array_map(
-            static fn(array $styleRule): string => (string)($styleRule['id'] ?? ''),
-            $this->getEnabledStyleRules()
-        )));
+        return $this->getSharedStyleRuleConfigurationService()->getSelectedStyleRuleIds();
     }
 
     public function getEnabledStyleRules(): array
     {
-        return array_values(array_filter(
-            $this->getSavedStyleRules(),
-            static fn(array $styleRule): bool => (bool)($styleRule['enabled'] ?? false)
-        ));
+        return $this->getSharedStyleRuleConfigurationService()->getEnabledStyleRules();
     }
 
     public function getStyleRuleOptions(): array
     {
-        $options = [];
-
-        foreach ($this->getEnabledStyleRules() as $styleRule) {
-            $id = (string)($styleRule['id'] ?? '');
-            if ($id !== '') {
-                $options[$id] = (string)($styleRule['label'] ?? $styleRule['name'] ?? $id);
-            }
-        }
-
-        return $options;
+        return $this->getSharedStyleRuleConfigurationService()->getStyleRuleOptions();
     }
 
     public function getStyleRuleOptionsForLanguage(string $targetLanguage): array
     {
-        $targetLanguage = $this->languageService->normalizeStyleRuleLanguage($targetLanguage);
-        if ($targetLanguage === '') {
-            return [];
-        }
-
-        $options = [];
-
-        foreach ($this->getEnabledStyleRules() as $styleRule) {
-            $id = (string)($styleRule['id'] ?? '');
-            if ($id === '' || (string)($styleRule['language'] ?? '') !== $targetLanguage) {
-                continue;
-            }
-
-            $options[$id] = (string)($styleRule['label'] ?? $styleRule['name'] ?? $id);
-        }
-
-        return $options;
+        return $this->getSharedStyleRuleConfigurationService()->getStyleRuleOptionsForLanguage($targetLanguage);
     }
 
     public function getStyleRuleDisplayOptions(): array
     {
-        $options = [];
-
-        foreach ($this->getEnabledStyleRules() as $styleRule) {
-            $id = (string)($styleRule['id'] ?? '');
-            if ($id === '') {
-                continue;
-            }
-
-            $options[$id] = [
-                'label' => (string)($styleRule['label'] ?? $styleRule['name'] ?? $id),
-                'language' => (string)($styleRule['language'] ?? ''),
-            ];
-        }
-
-        return $options;
+        return $this->getSharedStyleRuleConfigurationService()->getStyleRuleDisplayOptions();
     }
 
     public function getStyleRuleOptionsByLanguage(): array
     {
-        $optionsByLanguage = [];
-
-        foreach ($this->getEnabledStyleRules() as $styleRule) {
-            $id = (string)($styleRule['id'] ?? '');
-            $language = (string)($styleRule['language'] ?? '');
-            if ($id === '' || $language === '') {
-                continue;
-            }
-
-            $optionsByLanguage[$language][$id] = (string)($styleRule['label'] ?? $styleRule['name'] ?? $id);
-        }
-
-        return $optionsByLanguage;
+        return $this->getSharedStyleRuleConfigurationService()->getStyleRuleOptionsByLanguage();
     }
 
     public function isStyleRuleAvailableForLanguage(string $styleRuleId, string $targetLanguage): bool
     {
-        if ($styleRuleId === '') {
-            return false;
-        }
-
-        $targetLanguage = $this->languageService->normalizeStyleRuleLanguage($targetLanguage);
-        if ($targetLanguage === '') {
-            return false;
-        }
-
-        foreach ($this->getEnabledStyleRules() as $styleRule) {
-            if ((string)($styleRule['id'] ?? '') !== $styleRuleId) {
-                continue;
-            }
-
-            return (string)($styleRule['language'] ?? '') === $targetLanguage;
-        }
-
-        return false;
+        return $this->getSharedStyleRuleConfigurationService()->isStyleRuleAvailableForLanguage($styleRuleId, $targetLanguage);
     }
 
-    private function getStorageFilePath(): string
+    private function getSharedStyleRuleConfigurationService(): DeeplStyleRuleConfigurationService
     {
-        return Environment::getVarPath() . '/' . self::STORAGE_DIRECTORY . '/' . self::STORAGE_FILE;
+        if ($this->sharedStyleRuleConfigurationService === null) {
+            $this->sharedStyleRuleConfigurationService = GeneralUtility::makeInstance(DeeplStyleRuleConfigurationService::class);
+        }
+
+        return $this->sharedStyleRuleConfigurationService;
     }
 }
