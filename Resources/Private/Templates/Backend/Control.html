@@ -1,0 +1,595 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+    <div class="ppl-deepl-v3">
+        <template id="pplDeeplV3BackendData"><f:format.raw>{backendControlDataJson}</f:format.raw></template>
+        <div class="ppl-deepl-v3__head">
+            <h1><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:backend.title.v3" /></h1>
+            <p><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:backend.intro.v3" /></p>
+        </div>
+
+        <f:for each="{messages}" as="message">
+            <div class="ppl-deepl-v3__{message.type}">{message.text}</div>
+        </f:for>
+
+        <f:if condition="{authKeyConfigured}">
+            <f:else>
+                <div class="ppl-deepl-v3__error"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:error.missingAuthKey.v3" /></div>
+            </f:else>
+        </f:if>
+
+        <f:if condition="{activeTab} == 'translation'">
+            <f:then>
+                <div class="ppl-deepl-v3__card">
+                    <div class="ppl-deepl-v3__card-head">
+                        <strong><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:backend.translationSection" /></strong>
+                    </div>
+                    <div class="ppl-deepl-v3__card-body">
+                        <form method="post" action="{routeTranslation}" id="pplDeeplTextForm">
+                            <input type="hidden" name="module_action" value="translate_text">
+                            <input type="hidden" name="active_tab" value="translation">
+
+                            <div class="ppl-deepl-v3__grid">
+                                <div class="ppl-deepl-v3__field">
+                                    <label for="text_language_source"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:field.sourceLanguage" /></label>
+                                    <select id="text_language_source" name="language_source" data-role="deepl-source">
+                                        <f:for each="{sourceLanguages}" as="label" key="code">
+                                            <f:if condition="{textData.language_source} == {code}">
+                                                <f:then><option value="{code}" selected="selected">{label}</option></f:then>
+                                                <f:else><option value="{code}">{label}</option></f:else>
+                                            </f:if>
+                                        </f:for>
+                                    </select>
+                                </div>
+                                <div class="ppl-deepl-v3__field">
+                                    <label for="text_language_ziel"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:field.targetLanguage" /></label>
+                                    <select id="text_language_ziel" name="language_ziel" data-role="deepl-target">
+                                        <f:for each="{targetLanguages}" as="label" key="code">
+                                            <f:if condition="{textData.language_ziel} == {code}">
+                                                <f:then><option value="{code}" selected="selected">{label}</option></f:then>
+                                                <f:else><option value="{code}">{label}</option></f:else>
+                                            </f:if>
+                                        </f:for>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="ppl-deepl-v3__field ppl-deepl-v3__section">
+                                <div class="ppl-deepl-v3__field-head">
+                                    <label for="backend_textarea"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:text.inputLabel" /></label>
+                                    <button class="btn btn-default ppl-deepl-v3__copy" type="button" data-copy-source="backend_textarea"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:backend.copy" /></button>
+                                </div>
+                                <textarea id="backend_textarea" name="textarea" rows="10">{textData.textarea}</textarea>
+                            </div>
+
+                            <div class="ppl-deepl-v3__translation-options ppl-deepl-v3__section">
+                                <div class="ppl-deepl-v3__field">
+                                    <label for="backend_text_glossary_id"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:field.glossary" /></label>
+                                    <select id="backend_text_glossary_id" name="glossary_id" data-role="deepl-glossary-select">
+                                        <option value=""><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:option.noGlossary" /></option>
+                                        <f:for each="{textData.glossaryOptions}" as="label" key="id">
+                                            <f:if condition="{textData.glossary_id} == {id}">
+                                                <f:then><option value="{id}" selected="selected">{label}</option></f:then>
+                                                <f:else><option value="{id}">{label}</option></f:else>
+                                            </f:if>
+                                        </f:for>
+                                    </select>
+                                    <span class="ppl-deepl-v3__muted" data-role="deepl-glossary-label">
+                                        <f:if condition="{textData.glossaryAvailable}">
+                                            <f:then><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:hint.glossaryAvailable" /></f:then>
+                                            <f:else><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:hint.noGlossary" /></f:else>
+                                        </f:if>
+                                    </span>
+                                </div>
+                                <f:if condition="{apiCapabilities.supportsStyleRules}">
+                                    <div class="ppl-deepl-v3__field">
+                                        <label for="backend_style_rule_id"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:field.styleRule" /></label>
+                                        <select id="backend_style_rule_id" name="style_rule_id" data-role="deepl-style-rule-select">
+                                            <option value=""><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:option.disabled" /></option>
+                                            <f:for each="{textData.styleRuleOptions}" as="label" key="id">
+                                                <f:if condition="{textData.style_rule_id} == {id}">
+                                                    <f:then><option value="{id}" selected="selected">{label}</option></f:then>
+                                                    <f:else><option value="{id}">{label}</option></f:else>
+                                                </f:if>
+                                            </f:for>
+                                        </select>
+                                        <span class="ppl-deepl-v3__muted" data-role="deepl-style-rule-label">
+                                            <f:if condition="{textData.styleRuleOptions}">
+                                                <f:then><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:hint.styleRuleAvailable" /></f:then>
+                                                <f:else>
+                                                    <f:if condition="{styleRuleOptions}">
+                                                        <f:then><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:hint.noStyleRuleForTarget" /></f:then>
+                                                        <f:else><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:hint.noStyleRule" /></f:else>
+                                                    </f:if>
+                                                </f:else>
+                                            </f:if>
+                                        </span>
+                                    </div>
+                                </f:if>
+                                <f:if condition="{apiCapabilities.supportsCustomInstructions}">
+                                    <div class="ppl-deepl-v3__field ppl-deepl-v3__field--full">
+                                        <label for="backend_custom_instructions"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:field.customInstructions" /></label>
+                                        <textarea id="backend_custom_instructions" name="custom_instructions" rows="3">{textData.custom_instructions}</textarea>
+                                    </div>
+                                </f:if>
+                            </div>
+
+                            <div class="ppl-deepl-v3__actions ppl-deepl-v3__section">
+                                <f:if condition="{textData.sameLanguageSelected}">
+                                    <f:then>
+                                        <button class="btn btn-primary" type="submit" data-role="deepl-submit" disabled="disabled" title="{f:translate(key: 'LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:message.sameLanguage')}"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:text.translate" /></button>
+                                        <span class="ppl-deepl-v3__muted ppl-deepl-v3__language-warning" data-role="deepl-language-warning"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:message.sameLanguage" /></span>
+                                    </f:then>
+                                    <f:else>
+                                        <button class="btn btn-primary" type="submit" data-role="deepl-submit"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:text.translate" /></button>
+                                        <span class="ppl-deepl-v3__muted ppl-deepl-v3__language-warning" data-role="deepl-language-warning" hidden="hidden"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:message.sameLanguage" /></span>
+                                    </f:else>
+                                </f:if>
+                            </div>
+                        </form>
+
+                        <f:if condition="{textData.translationError}">
+                            <div class="ppl-deepl-v3__error" data-role="deepl-server-error">{textData.translationError}</div>
+                        </f:if>
+
+                        <div class="ppl-deepl-v3__field ppl-deepl-v3__section">
+                            <div class="ppl-deepl-v3__field-head">
+                                <label for="backend_translated_output"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:text.outputCard" /></label>
+                                <button class="btn btn-default ppl-deepl-v3__copy" type="button" data-copy-source="backend_translated_output"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:backend.copy" /></button>
+                            </div>
+                            <textarea id="backend_translated_output" rows="10" readonly="readonly"><f:if condition="{textData.translatedText}">{textData.translatedText}</f:if></textarea>
+                        </div>
+                    </div>
+                </div>
+            </f:then>
+            <f:else>
+                <div class="ppl-deepl-v3__card">
+                    <div class="ppl-deepl-v3__card-head">
+                        <strong><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:backend.fileTranslationSection" /></strong>
+                    </div>
+                    <div class="ppl-deepl-v3__card-body">
+                        <form method="post" action="{routeFile}" enctype="multipart/form-data" id="pplDeeplFileForm">
+                            <input type="hidden" name="module_action" value="translate_file">
+                            <input type="hidden" name="active_tab" value="file">
+
+                            <div class="ppl-deepl-v3__grid">
+                                <div class="ppl-deepl-v3__field">
+                                    <label for="file_language_source"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:field.sourceLanguage" /></label>
+                                    <select id="file_language_source" name="language_source" data-role="deepl-source">
+                                        <f:for each="{sourceLanguages}" as="label" key="code">
+                                            <f:if condition="{fileData.language_source} == {code}">
+                                                <f:then><option value="{code}" selected="selected">{label}</option></f:then>
+                                                <f:else><option value="{code}">{label}</option></f:else>
+                                            </f:if>
+                                        </f:for>
+                                    </select>
+                                </div>
+                                <div class="ppl-deepl-v3__field">
+                                    <label for="file_language_ziel"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:field.targetLanguage" /></label>
+                                    <select id="file_language_ziel" name="language_ziel" data-role="deepl-target">
+                                        <f:for each="{targetLanguages}" as="label" key="code">
+                                            <f:if condition="{fileData.language_ziel} == {code}">
+                                                <f:then><option value="{code}" selected="selected">{label}</option></f:then>
+                                                <f:else><option value="{code}">{label}</option></f:else>
+                                            </f:if>
+                                        </f:for>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="ppl-deepl-v3__option-grid ppl-deepl-v3__section">
+                                <div class="ppl-deepl-v3__field">
+                                    <label for="backend_file_glossary_id"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:field.glossary" /></label>
+                                    <select id="backend_file_glossary_id" name="glossary_id" data-role="deepl-glossary-select">
+                                        <option value=""><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:option.noGlossary" /></option>
+                                        <f:for each="{fileData.glossaryOptions}" as="label" key="id">
+                                            <f:if condition="{fileData.glossary_id} == {id}">
+                                                <f:then><option value="{id}" selected="selected">{label}</option></f:then>
+                                                <f:else><option value="{id}">{label}</option></f:else>
+                                            </f:if>
+                                        </f:for>
+                                    </select>
+                                    <span class="ppl-deepl-v3__muted" data-role="deepl-glossary-label">
+                                        <f:if condition="{fileData.glossaryAvailable}">
+                                            <f:then><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:hint.glossaryAvailable" /></f:then>
+                                            <f:else><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:hint.noGlossary" /></f:else>
+                                        </f:if>
+                                    </span>
+                                </div>
+                                <div class="ppl-deepl-v3__field">
+                                    <label for="backend_userfile"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:file.choose" /></label>
+                                    <input id="backend_userfile" type="file" name="userfile" accept=".txt,.pdf,.docx,.pptx">
+                                    <span class="ppl-deepl-v3__muted"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:file.allowedFormats" /></span>
+                                </div>
+                            </div>
+
+                            <div class="ppl-deepl-v3__actions ppl-deepl-v3__section">
+                                <f:if condition="{fileData.sameLanguageSelected}">
+                                    <f:then>
+                                        <button class="btn btn-primary" type="submit" data-role="deepl-submit" disabled="disabled" title="{f:translate(key: 'LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:message.sameLanguage')}"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:file.translate" /></button>
+                                        <span class="ppl-deepl-v3__muted ppl-deepl-v3__language-warning" data-role="deepl-language-warning"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:message.sameLanguage" /></span>
+                                    </f:then>
+                                    <f:else>
+                                        <button class="btn btn-primary" type="submit" data-role="deepl-submit"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:file.translate" /></button>
+                                        <span class="ppl-deepl-v3__muted ppl-deepl-v3__language-warning" data-role="deepl-language-warning" hidden="hidden"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:message.sameLanguage" /></span>
+                                    </f:else>
+                                </f:if>
+                            </div>
+                        </form>
+
+                        <f:if condition="{fileData.errorMessage}">
+                            <div class="ppl-deepl-v3__error" data-role="deepl-server-error">{fileData.errorMessage}</div>
+                        </f:if>
+
+                        <f:if condition="{fileData.translatedFilePath}">
+                            <div class="ppl-deepl-v3__success ppl-deepl-v3__download-result">
+                                <div class="ppl-deepl-v3__download-meta">
+                                    <strong><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:backend.translatedFile" /></strong>
+                                    <span class="ppl-deepl-v3__download-file">{fileData.translatedFileName}</span>
+                                </div>
+                                <a class="ppl-deepl-v3__download" href="{fileData.translatedFilePath}" download>
+                                    <f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:file.downloadNamed" arguments="{0: fileData.translatedFileName}" />
+                                </a>
+                            </div>
+                        </f:if>
+                    </div>
+                </div>
+            </f:else>
+        </f:if>
+    </div>
+
+    <f:comment>
+        (function () {
+        function initializePplDeeplV3BackendControls() {
+            const glossaryOptionsByCombination = <f:format.raw>{glossaryOptionsByCombinationJson}</f:format.raw>;
+            const styleRuleOptions = <f:format.raw>{styleRuleOptionsJson}</f:format.raw>;
+            const styleRuleOptionsByLanguage = <f:format.raw>{styleRuleOptionsByLanguageJson}</f:format.raw>;
+            const labels = {
+                sameLanguage: '<f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:message.sameLanguage" />',
+                noGlossary: '<f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:option.noGlossary" />',
+                glossaryAvailable: '<f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:hint.glossaryAvailable" />',
+                noGlossaryApproved: '<f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:hint.noGlossary" />',
+                disabled: '<f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:option.disabled" />',
+                styleRuleAvailable: '<f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:hint.styleRuleAvailable" />',
+                noStyleRule: '<f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:hint.noStyleRule" />',
+                noStyleRuleForTarget: '<f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:hint.noStyleRuleForTarget" />',
+                styleRuleWrongLanguage: '<f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:option.styleRuleWrongLanguage" />',
+                copied: '<f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:message.copied" />'
+            };
+
+            function normalizeGlossaryLanguage(language) {
+                const normalizedLanguage = String(language || '').toUpperCase();
+
+                if (normalizedLanguage === 'EN-GB' || normalizedLanguage === 'EN-US') {
+                    return 'EN';
+                }
+
+                if (normalizedLanguage.indexOf('ES-') === 0) {
+                    return 'ES';
+                }
+
+                if (normalizedLanguage === 'DE-DE') {
+                    return 'DE';
+                }
+
+                if (normalizedLanguage === 'PT-PT' || normalizedLanguage === 'PT-BR') {
+                    return 'PT';
+                }
+
+                if (normalizedLanguage === 'ZH-HANS' || normalizedLanguage === 'ZH-HANT') {
+                    return 'ZH';
+                }
+
+                return normalizedLanguage;
+            }
+
+            function normalizeStyleRuleLanguage(language) {
+                const normalizedLanguage = String(language || '').toUpperCase();
+                const baseLanguage = normalizedLanguage.split('-')[0] || normalizedLanguage;
+                return baseLanguage === 'PT' ? 'PT' : baseLanguage;
+            }
+
+            function isSameLanguageValue(sourceLanguage, targetLanguage) {
+                return sourceLanguage !== ''
+                    && targetLanguage !== ''
+                    && normalizeGlossaryLanguage(sourceLanguage) === normalizeGlossaryLanguage(targetLanguage);
+            }
+
+            function updateTargetLanguageAvailability(source, target) {
+                if (!source || !target) {
+                    return false;
+                }
+
+                const selectedValue = target.value;
+                let fallbackValue = '';
+
+                Array.from(target.options).forEach(function (option) {
+                    const blocked = isSameLanguageValue(source.value, option.value);
+                    option.disabled = blocked;
+                    option.hidden = blocked;
+                    if (blocked) {
+                        option.setAttribute('aria-disabled', 'true');
+                    } else {
+                        option.removeAttribute('aria-disabled');
+                        if (option.value !== '' && fallbackValue === '') {
+                            fallbackValue = option.value;
+                        }
+                    }
+                });
+
+                if (isSameLanguageValue(source.value, selectedValue) && fallbackValue !== '') {
+                    target.value = fallbackValue;
+                    return true;
+                }
+
+                return false;
+            }
+
+            function updateStyleRuleOptions(target, styleRule, label) {
+                if (!target || !styleRule) {
+                    return;
+                }
+
+                const language = normalizeStyleRuleLanguage(target.value);
+                const options = styleRuleOptionsByLanguage[language] || {};
+                const selectedValue = styleRule.value;
+                styleRule.innerHTML = '';
+
+                const emptyOption = document.createElement('option');
+                emptyOption.value = '';
+                emptyOption.textContent = labels.disabled;
+                styleRule.appendChild(emptyOption);
+
+                Object.keys(options).forEach(function (id) {
+                    const option = document.createElement('option');
+                    option.value = id;
+                    option.textContent = options[id];
+                    if (id === selectedValue) {
+                        option.selected = true;
+                    }
+                    styleRule.appendChild(option);
+                });
+
+                const hasOptions = Object.keys(options).length > 0;
+                const hasOtherStyleRules = Object.keys(styleRuleOptions).length > 0;
+
+                styleRule.disabled = !hasOptions;
+
+                if (!hasOptions || !Object.prototype.hasOwnProperty.call(options, selectedValue)) {
+                    styleRule.value = '';
+                }
+
+                if (label) {
+                    label.textContent = hasOptions
+                        ? labels.styleRuleAvailable
+                        : (hasOtherStyleRules ? labels.noStyleRuleForTarget : labels.noStyleRule);
+                }
+            }
+
+            function updateLanguageGuard(form) {
+                const source = form.querySelector('[data-role="deepl-source"]');
+                const target = form.querySelector('[data-role="deepl-target"]');
+                const submit = form.querySelector('[data-role="deepl-submit"]');
+                const warning = form.querySelector('[data-role="deepl-language-warning"]');
+
+                if (!source || !target || !submit) {
+                    return true;
+                }
+
+                updateTargetLanguageAvailability(source, target);
+
+                const sameLanguage = source.value !== ''
+                    && target.value !== ''
+                    && isSameLanguageValue(source.value, target.value);
+                const message = labels.sameLanguage;
+
+                submit.disabled = sameLanguage;
+                submit.title = sameLanguage ? message : '';
+                source.setCustomValidity(sameLanguage ? message : '');
+                target.setCustomValidity(sameLanguage ? message : '');
+
+                if (warning) {
+                    warning.hidden = !sameLanguage;
+                    warning.textContent = message;
+                }
+
+                return !sameLanguage;
+            }
+
+            function updateForm(form) {
+                const source = form.querySelector('[data-role="deepl-source"]');
+                const target = form.querySelector('[data-role="deepl-target"]');
+                const glossary = form.querySelector('[data-role="deepl-glossary-select"]');
+                const label = form.querySelector('[data-role="deepl-glossary-label"]');
+                const styleRule = form.querySelector('[data-role="deepl-style-rule-select"]');
+                const styleRuleLabel = form.querySelector('[data-role="deepl-style-rule-label"]');
+
+                updateLanguageGuard(form);
+                updateStyleRuleOptions(target, styleRule, styleRuleLabel);
+
+                if (!source || !target || !glossary || !label) {
+                    return;
+                }
+
+                const key = normalizeGlossaryLanguage(source.value) + ':' + normalizeGlossaryLanguage(target.value);
+                const options = glossaryOptionsByCombination[key] || {};
+                const selectedValue = glossary.value;
+
+                glossary.innerHTML = '';
+                const emptyOption = document.createElement('option');
+                emptyOption.value = '';
+                emptyOption.textContent = labels.noGlossary;
+                glossary.appendChild(emptyOption);
+
+                Object.keys(options).forEach(function (id) {
+                    const option = document.createElement('option');
+                    option.value = id;
+                    option.textContent = options[id];
+                    if (id === selectedValue) {
+                        option.selected = true;
+                    }
+                    glossary.appendChild(option);
+                });
+
+                const available = Object.keys(options).length > 0;
+                glossary.disabled = !available;
+
+                if (!available) {
+                    glossary.value = '';
+                } else if (Object.prototype.hasOwnProperty.call(options, selectedValue)) {
+                    glossary.value = selectedValue;
+                } else {
+                    glossary.value = Object.keys(options)[0] || '';
+                }
+
+                label.textContent = available
+                    ? labels.glossaryAvailable
+                    : labels.noGlossaryApproved;
+            }
+
+            function getCopySourceElement(button) {
+                return document.getElementById(button.getAttribute('data-copy-source') || '');
+            }
+
+            function getCopySourceValue(button) {
+                const target = getCopySourceElement(button);
+                if (!target) {
+                    return '';
+                }
+                return String(typeof target.value === 'string' ? target.value : target.textContent || '');
+            }
+
+            function updateCopyButton(button) {
+                const hasText = getCopySourceValue(button).trim() !== '';
+                button.disabled = !hasText;
+            }
+
+            function copyFromTargetElement(target) {
+                if (!target || typeof target.select !== 'function') {
+                    return false;
+                }
+
+                const activeElement = document.activeElement;
+                target.focus({preventScroll: true});
+                target.select();
+                if (typeof target.setSelectionRange === 'function') {
+                    target.setSelectionRange(0, String(target.value || '').length);
+                }
+
+                const copied = document.execCommand('copy');
+
+                if (activeElement && typeof activeElement.focus === 'function' && activeElement !== target) {
+                    activeElement.focus({preventScroll: true});
+                }
+
+                return copied;
+            }
+
+            function copyTextFallback(text, target) {
+                if (copyFromTargetElement(target)) {
+                    return true;
+                }
+
+                const temporaryTextarea = document.createElement('textarea');
+                temporaryTextarea.value = text;
+                temporaryTextarea.setAttribute('readonly', 'readonly');
+                temporaryTextarea.style.position = 'fixed';
+                temporaryTextarea.style.top = '-1000px';
+                temporaryTextarea.style.left = '-1000px';
+                temporaryTextarea.style.opacity = '0';
+                document.body.appendChild(temporaryTextarea);
+                temporaryTextarea.focus();
+                temporaryTextarea.select();
+                temporaryTextarea.setSelectionRange(0, temporaryTextarea.value.length);
+                const copied = document.execCommand('copy');
+                document.body.removeChild(temporaryTextarea);
+                return copied;
+            }
+
+            async function copyText(text, target) {
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(text);
+                    return true;
+                }
+                return copyTextFallback(text, target);
+            }
+
+            async function copyField(button) {
+                const target = getCopySourceElement(button);
+                const text = getCopySourceValue(button);
+                if (text.trim() === '') {
+                    return;
+                }
+
+                const originalText = button.textContent;
+                try {
+                    await copyText(text, target);
+                } catch (error) {
+                    copyTextFallback(text, target);
+                }
+                button.textContent = labels.copied;
+                window.setTimeout(function () {
+                    button.textContent = originalText;
+                    updateCopyButton(button);
+                }, 1400);
+            }
+
+            document.querySelectorAll('#pplDeeplTextForm, #pplDeeplFileForm').forEach(function (form) {
+                const clearServerErrors = function () {
+                    const container = form.closest('.ppl-deepl-v3__card-body') || form.parentElement || form;
+                    container.querySelectorAll('[data-role="deepl-server-error"]').forEach(function (message) {
+                        message.hidden = true;
+                    });
+                };
+                updateForm(form);
+                if (!updateLanguageGuard(form)) {
+                    clearServerErrors();
+                }
+                form.addEventListener('submit', function (event) {
+                    if (!updateLanguageGuard(form)) {
+                        event.preventDefault();
+                        clearServerErrors();
+                        const target = form.querySelector('[data-role="deepl-target"]');
+                        const warning = form.querySelector('[data-role="deepl-language-warning"]');
+                        if (warning) {
+                            warning.hidden = false;
+                        }
+                        if (target) {
+                            target.reportValidity();
+                            target.focus();
+                        }
+                    }
+                });
+                form.querySelectorAll('[data-role="deepl-source"], [data-role="deepl-target"]').forEach(function (select) {
+                    select.addEventListener('change', function () {
+                        clearServerErrors();
+                        updateForm(form);
+                    });
+                });
+                form.querySelectorAll('[data-role="deepl-glossary-select"], #backend_style_rule_id, textarea, input[type="file"]').forEach(function (field) {
+                    field.addEventListener('change', clearServerErrors);
+                    field.addEventListener('input', clearServerErrors);
+                });
+            });
+
+            document.querySelectorAll('[data-copy-source]').forEach(function (button) {
+                const target = document.getElementById(button.getAttribute('data-copy-source') || '');
+                updateCopyButton(button);
+                button.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    copyField(button);
+                });
+                if (target) {
+                    target.addEventListener('input', function () {
+                        updateCopyButton(button);
+                    });
+                }
+            });
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializePplDeeplV3BackendControls);
+        } else {
+            initializePplDeeplV3BackendControls();
+        }
+        }());
+    </f:comment>
+</html>
