@@ -1,0 +1,23 @@
+mod.wizards.newContentElement.wizardItems.plugins {
+    elements {
+        ppl_deepl_v3_translate_text {
+            iconIdentifier = module-ppl-deepl-v3-translation
+            title = LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:plugin.v3.text.title
+            description = LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:wizard.v3.text.description
+            tt_content_defValues {
+                CType = list
+                list_type = ppldeeplv3translate_deepl
+            }
+        }
+        ppl_deepl_v3_translate_file {
+            iconIdentifier = module-ppl-deepl-v3-file-translation
+            title = LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:plugin.v3.file.title
+            description = LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:wizard.v3.file.description
+            tt_content_defValues {
+                CType = list
+                list_type = ppldeeplv3translate_deeplfile
+            }
+        }
+    }
+    show := addToList(ppl_deepl_v3_translate_text,ppl_deepl_v3_translate_file)
+}

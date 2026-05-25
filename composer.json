@@ -1,0 +1,36 @@
+{
+  "name": "ppl/ppl-deepl-v3-translate",
+  "description": "TYPO3 12.4 extension for DeepL V3 text and file translation in frontend plugins and backend modules",
+  "type": "typo3-cms-extension",
+  "license": "GPL-2.0-or-later",
+  "authors": [
+    {
+      "name": "Pawel Pliousnin",
+      "email": "pliousnin@ppl-ds.com",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": ">=8.2",
+    "ppl/ppl-deepl-v3-requests": "^12.4",
+    "typo3/cms-core": "^12.4",
+    "typo3/cms-backend": "^12.4",
+    "typo3/cms-extbase": "^12.4",
+    "typo3/cms-fluid": "^12.4",
+    "typo3/cms-fluid-styled-content": "^12.4",
+    "typo3/cms-frontend": "^12.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "Ppl\\PplDeeplV3Translate\\": "Classes/"
+    }
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-main": "12.4.x-dev"
+    },
+    "typo3/cms": {
+      "extension-key": "ppl_deepl_v3_translate"
+    }
+  }
+}

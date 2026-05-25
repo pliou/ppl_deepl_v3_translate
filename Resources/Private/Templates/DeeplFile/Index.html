@@ -1,0 +1,330 @@
+<f:form action="index" method="post" enctype="multipart/form-data" id="deeplFileForm" class="ppl-deepl-form">
+    <div
+        id="deeplTranslationRoot"
+        class="ppl-deepl-frontend ppl-deepl-frontend--file"
+        data-label-no-glossary="{f:translate(key: 'LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:option.noGlossary')}"
+        data-label-glossary-available="{f:translate(key: 'LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:hint.glossaryAvailable')}"
+        data-label-no-glossary-hint="{f:translate(key: 'LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:hint.noGlossary')}"
+    >
+        <script type="application/json" id="pplDeeplFrontendFileData"><f:format.raw>{frontendControlDataJson}</f:format.raw></script>
+        <f:format.raw>{frontendAccessHeader}</f:format.raw>
+
+        <div class="ppl-deepl-page-head">
+            <div class="ppl-deepl-page-head__icon" aria-hidden="true"></div>
+            <div class="ppl-deepl-page-head__content">
+                <h2><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:file.title.v3" /></h2>
+                <p><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:file.intro" /></p>
+            </div>
+        </div>
+
+        <div class="ppl-deepl-layout ppl-deepl-layout--single">
+            <section class="ppl-deepl-card">
+                <div class="ppl-deepl-card__head">
+                    <strong><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:file.settingsCard" /></strong>
+                </div>
+                <div class="ppl-deepl-card__body">
+                    <div class="ppl-deepl-grid">
+                        <div class="ppl-deepl-field">
+                            <label for="file_language_source"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:field.sourceLanguage" /></label>
+                            <f:form.select name="language_source" id="file_language_source" options="{sourceLanguages}" value="{language_source}" />
+                        </div>
+
+                        <div class="ppl-deepl-field">
+                            <label for="file_language_ziel"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:field.targetLanguage" /></label>
+                            <f:form.select name="language_ziel" id="file_language_ziel" options="{targetLanguages}" value="{language_ziel}" />
+                        </div>
+                    </div>
+
+                    <div id="fileLanguageWarning" class="ppl-deepl-alert ppl-deepl-section" hidden="hidden">
+                        <f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:message.sameLanguage" />
+                    </div>
+
+                    <div class="ppl-deepl-field ppl-deepl-section">
+                        <label for="file_glossary_id"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:field.glossary" /></label>
+                        <f:form.select
+                            name="glossary_id"
+                            id="file_glossary_id"
+                            options="{glossaryOptions}"
+                            value="{glossary_id}"
+                            prependOptionLabel="{f:translate(key: 'LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:option.noGlossary')}"
+                            prependOptionValue=""
+                        />
+                        <span id="fileGlossaryStatus" class="ppl-deepl-muted">
+                            <f:if condition="{glossaryAvailable}">
+                                <f:then><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:hint.glossaryAvailable" /></f:then>
+                                <f:else><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:hint.noGlossary" /></f:else>
+                            </f:if>
+                        </span>
+                    </div>
+
+                    <div class="ppl-deepl-section">
+                        <div class="ppl-deepl-label"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:file.choose" /></div>
+                        <p class="ppl-deepl-muted"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:file.allowedFormats" /></p>
+                        <label for="userfile" class="ppl-deepl-file-drop">
+                            <f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:file.choose" />
+                        </label>
+                        <f:form.upload name="userfile" id="userfile" class="ppl-deepl-hidden-file" />
+
+                        <div id="selectedFileBox" class="ppl-deepl-file-box ppl-deepl-section">
+                            <div>
+                                <div class="ppl-deepl-muted"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:file.selected" /></div>
+                                <div id="selectedFileName" class="ppl-deepl-file-name"></div>
+                            </div>
+                            <button type="button" id="removeSelectedFileButton" class="ppl-deepl-button ppl-deepl-button--danger" aria-label="{f:translate(key: 'LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:file.remove')}" title="{f:translate(key: 'LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:file.remove')}">
+                                x
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="ppl-deepl-section">
+                        <div class="ppl-deepl-label"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:file.translated" /></div>
+                        <div id="translatedFileBox" class="ppl-deepl-file-box is-visible">
+                            <div>
+                                <div class="ppl-deepl-muted"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:file.status" /></div>
+                                <div id="translatedFileName" class="ppl-deepl-file-name">
+                                    <f:if condition="{translatedFileName}">
+                                        <f:then>{translatedFileName}</f:then>
+                                        <f:else><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:file.none" /></f:else>
+                                    </f:if>
+                                </div>
+                            </div>
+
+                            <f:if condition="{translatedFilePath}">
+                                <f:then>
+                                    <a id="downloadTranslatedFileButton" class="ppl-deepl-button ppl-deepl-button--success" href="{translatedFilePath}" download>
+                                        <f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:file.downloadNamed" arguments="{0: translatedFileName}" />
+                                    </a>
+                                </f:then>
+                                <f:else>
+                                    <button type="button" id="downloadTranslatedFileButton" class="ppl-deepl-button ppl-deepl-button--secondary" disabled="disabled">
+                                        <f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:file.download" />
+                                    </button>
+                                </f:else>
+                            </f:if>
+                        </div>
+                    </div>
+
+                    <div class="ppl-deepl-actions">
+                        <button type="submit" id="translateFileButton" class="ppl-deepl-button ppl-deepl-button--primary" disabled="disabled">
+                            <f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:file.translate" />
+                        </button>
+                    </div>
+
+                    <f:if condition="{errorMessage}">
+                        <div id="fileErrorMessage" class="ppl-deepl-alert ppl-deepl-section" data-role="deepl-server-error">{errorMessage}</div>
+                    </f:if>
+                </div>
+            </section>
+        </div>
+    </div>
+</f:form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const root = document.getElementById('deeplTranslationRoot');
+        const labels = root ? root.dataset : {};
+        const fileInput = document.getElementById('userfile');
+        const sourceLanguageSelect = document.getElementById('file_language_source');
+        const targetLanguageSelect = document.getElementById('file_language_ziel');
+        const glossarySelect = document.getElementById('file_glossary_id');
+        const glossaryStatus = document.getElementById('fileGlossaryStatus');
+        const selectedFileBox = document.getElementById('selectedFileBox');
+        const selectedFileName = document.getElementById('selectedFileName');
+        const removeSelectedFileButton = document.getElementById('removeSelectedFileButton');
+        const translateFileButton = document.getElementById('translateFileButton');
+        const fileLanguageWarning = document.getElementById('fileLanguageWarning');
+        const fileForm = document.getElementById('deeplFileForm');
+        const fileErrorMessage = document.getElementById('fileErrorMessage');
+        const glossaryOptionsByCombination = <f:format.raw>{glossaryOptionsByCombinationJson}</f:format.raw>;
+
+        function normalizeGlossaryLanguage(language) {
+            const normalizedLanguage = String(language || '').toUpperCase();
+            if (normalizedLanguage === 'EN-GB' || normalizedLanguage === 'EN-US') {
+                return 'EN';
+            }
+            if (normalizedLanguage.indexOf('ES-') === 0) {
+                return 'ES';
+            }
+            if (normalizedLanguage === 'DE-DE') {
+                return 'DE';
+            }
+            if (normalizedLanguage === 'PT-PT' || normalizedLanguage === 'PT-BR') {
+                return 'PT';
+            }
+            if (normalizedLanguage === 'ZH-HANS' || normalizedLanguage === 'ZH-HANT') {
+                return 'ZH';
+            }
+            return normalizedLanguage;
+        }
+
+        function getCurrentLanguageCombinationKey() {
+            if (!sourceLanguageSelect || !targetLanguageSelect) {
+                return '';
+            }
+            return normalizeGlossaryLanguage(sourceLanguageSelect.value) + ':' + normalizeGlossaryLanguage(targetLanguageSelect.value);
+        }
+
+        function isSameLanguageValue(sourceLanguage, targetLanguage) {
+            return sourceLanguage !== ''
+                && targetLanguage !== ''
+                && normalizeGlossaryLanguage(sourceLanguage) === normalizeGlossaryLanguage(targetLanguage);
+        }
+
+        function updateTargetLanguageAvailability() {
+            if (!sourceLanguageSelect || !targetLanguageSelect) {
+                return false;
+            }
+
+            const selectedValue = targetLanguageSelect.value;
+            let fallbackValue = '';
+
+            Array.from(targetLanguageSelect.options).forEach(function (option) {
+                const blocked = isSameLanguageValue(sourceLanguageSelect.value, option.value);
+                option.disabled = blocked;
+                option.hidden = blocked;
+                if (blocked) {
+                    option.setAttribute('aria-disabled', 'true');
+                } else {
+                    option.removeAttribute('aria-disabled');
+                    if (option.value !== '' && fallbackValue === '') {
+                        fallbackValue = option.value;
+                    }
+                }
+            });
+
+            if (isSameLanguageValue(sourceLanguageSelect.value, selectedValue) && fallbackValue !== '') {
+                targetLanguageSelect.value = fallbackValue;
+                clearServerError();
+                return true;
+            }
+
+            return false;
+        }
+
+        function isSameLanguageSelected() {
+            return Boolean(
+                sourceLanguageSelect
+                && targetLanguageSelect
+                && isSameLanguageValue(sourceLanguageSelect.value, targetLanguageSelect.value)
+            );
+        }
+
+        function clearServerError() {
+            if (fileErrorMessage) {
+                fileErrorMessage.hidden = true;
+            }
+        }
+
+        function getGlossaryOptionsForCurrentCombination() {
+            return glossaryOptionsByCombination[getCurrentLanguageCombinationKey()] || {};
+        }
+
+        function updateTranslateButtonState() {
+            updateTargetLanguageAvailability();
+            const hasFile = fileInput && fileInput.files && fileInput.files.length > 0;
+            const hasLanguageSelection = Boolean(sourceLanguageSelect && targetLanguageSelect);
+            const sameLanguageSelected = hasLanguageSelection && isSameLanguageSelected();
+            const hasDifferentLanguages = hasLanguageSelection && !sameLanguageSelected;
+            if (!translateFileButton) {
+                return;
+            }
+            translateFileButton.disabled = !hasFile || !hasDifferentLanguages;
+            if (fileLanguageWarning) {
+                fileLanguageWarning.hidden = !sameLanguageSelected;
+            }
+        }
+
+        function updateGlossaryState() {
+            updateTargetLanguageAvailability();
+            if (!glossarySelect || !glossaryStatus) {
+                return;
+            }
+            const options = getGlossaryOptionsForCurrentCombination();
+            const selectedValue = glossarySelect.value;
+            glossarySelect.innerHTML = '';
+            const emptyOption = document.createElement('option');
+            emptyOption.value = '';
+            emptyOption.textContent = labels.labelNoGlossary;
+            glossarySelect.appendChild(emptyOption);
+            Object.keys(options).forEach(function (id) {
+                const option = document.createElement('option');
+                option.value = id;
+                option.textContent = options[id];
+                if (id === selectedValue) {
+                    option.selected = true;
+                }
+                glossarySelect.appendChild(option);
+            });
+            const available = Object.keys(options).length > 0;
+            glossarySelect.disabled = !available;
+            if (!available) {
+                glossarySelect.value = '';
+            } else if (Object.prototype.hasOwnProperty.call(options, selectedValue)) {
+                glossarySelect.value = selectedValue;
+            } else {
+                glossarySelect.value = Object.keys(options)[0] || '';
+            }
+            glossaryStatus.textContent = available ? labels.labelGlossaryAvailable : labels.labelNoGlossaryHint;
+        }
+
+        function updateSelectedFileBox() {
+            const hasFile = fileInput && fileInput.files && fileInput.files.length > 0;
+            if (!selectedFileBox || !selectedFileName) {
+                return;
+            }
+            if (hasFile) {
+                selectedFileName.textContent = fileInput.files[0].name;
+                selectedFileBox.classList.add('is-visible');
+            } else {
+                selectedFileName.textContent = '';
+                selectedFileBox.classList.remove('is-visible');
+            }
+            updateTranslateButtonState();
+        }
+
+        if (fileInput) {
+            fileInput.addEventListener('change', function () {
+                clearServerError();
+                updateSelectedFileBox();
+            });
+        }
+        if (sourceLanguageSelect) {
+            sourceLanguageSelect.addEventListener('change', function () {
+                clearServerError();
+                updateTargetLanguageAvailability();
+                updateGlossaryState();
+                updateTranslateButtonState();
+            });
+        }
+        if (targetLanguageSelect) {
+            targetLanguageSelect.addEventListener('change', function () {
+                clearServerError();
+                updateTargetLanguageAvailability();
+                updateGlossaryState();
+                updateTranslateButtonState();
+            });
+        }
+        if (removeSelectedFileButton && fileInput) {
+            removeSelectedFileButton.addEventListener('click', function () {
+                fileInput.value = '';
+                updateSelectedFileBox();
+            });
+        }
+        if (fileForm) {
+            fileForm.addEventListener('submit', function (event) {
+                const submitter = event.submitter || document.activeElement;
+                if (submitter && submitter.getAttribute && submitter.getAttribute('name') === 'ppl_deepl_logout') {
+                    return;
+                }
+                updateTranslateButtonState();
+                if (isSameLanguageSelected()) {
+                    event.preventDefault();
+                }
+            });
+        }
+
+        updateTargetLanguageAvailability();
+        updateGlossaryState();
+        updateSelectedFileBox();
+    });
+</script>
