@@ -107,8 +107,8 @@
             <trans-unit id="backend.usePplLogin"><source>Use PPL Login</source></trans-unit>
             <trans-unit id="backend.useLoginByPageId"><source>Use Login by Page ID</source></trans-unit>
             <trans-unit id="backend.loginPageId"><source>Login page ID</source></trans-unit>
-            <trans-unit id="backend.loginPplDescription"><source>Shows the login form directly before the DeepL element.</source></trans-unit>
-            <trans-unit id="backend.loginPageDescription"><source>Redirects to the login page. For return redirects, enable the GET/POST parameter redirect mode in the felogin plugin.</source></trans-unit>
+            <trans-unit id="backend.loginPplDescription"><source>Alternative inline login directly before the DeepL element.</source></trans-unit>
+            <trans-unit id="backend.loginPageDescription"><source>Recommended for most installations. Uses TYPO3/felogin and benefits from TYPO3 security and maintenance updates.</source></trans-unit>
             <trans-unit id="backend.loginPageHint"><source>Only for "Use Login by Page ID".</source></trans-unit>
             <trans-unit id="backend.loginPageRedirectHint"><source>The extension sends redirect_url and return_url to the login page. In the felogin plugin, enable Redirects &gt; Redirect Mode &gt; Defined by GET/POST Parameters so users return after login. For direct /login links, add After Login as a fallback redirect page.</source></trans-unit>
             <trans-unit id="backend.saveFrontendLoginBehavior"><source>Save frontend login behavior</source></trans-unit>

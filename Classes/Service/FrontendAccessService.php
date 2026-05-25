@@ -335,7 +335,7 @@ final class FrontendAccessService
     {
         $mode = $this->getConfigurationValue($settings, 'frontendAccessMode');
         if (!in_array($mode, [self::MODE_PPL_LOGIN, self::MODE_LOGIN_PAGE], true)) {
-            return self::MODE_PPL_LOGIN;
+            return self::MODE_LOGIN_PAGE;
         }
 
         return $mode;

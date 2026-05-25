@@ -20,7 +20,7 @@ final class FrontendAccessConfigurationService
 
         return [
             'frontendAccessMode' => $this->normalizeMode(
-                $this->getStoredValue($extensionConfiguration, 'frontendAccessMode', self::MODE_PPL_LOGIN)
+                $this->getStoredValue($extensionConfiguration, 'frontendAccessMode', self::MODE_LOGIN_PAGE)
             ),
             'loginPageUid' => $this->normalizeLoginPageUidForDisplay(
                 $this->getStoredValue($extensionConfiguration, 'loginPageUid', '')
@@ -86,7 +86,7 @@ final class FrontendAccessConfigurationService
     {
         return in_array($mode, [self::MODE_PPL_LOGIN, self::MODE_LOGIN_PAGE], true)
             ? $mode
-            : self::MODE_PPL_LOGIN;
+            : self::MODE_LOGIN_PAGE;
     }
 
     private function normalizeLoginPageUidForDisplay(string $loginPageUid): string

@@ -16,7 +16,7 @@ The extension provides the product UI, TYPO3 controllers, templates and frontend
 - Local approval workflow for fetched DeepL V3 style rules.
 - Target-language filtering for glossaries and style rules.
 - Optional custom instructions for text translation.
-- Frontend access control with either the PPL inline login form or a TYPO3/felogin login page.
+- Frontend access control with TYPO3/felogin login page mode by default, plus PPL inline login as an alternative.
 
 ## V3 Architecture
 
@@ -147,19 +147,19 @@ The frontend UI only exposes locally approved languages, glossaries and style ru
 
 ## Frontend Access
 
-The extension supports two frontend access modes.
-
-PPL inline login:
-
-- Shows a login form directly before the DeepL element.
-- Can authenticate allowed frontend users and, if enabled, backend users.
-- Logout returns to the protected PPL page and shows the inline login again.
+The extension supports two frontend access modes. `Use Login by Page ID` is the default and recommended mode for most installations because it keeps authentication inside TYPO3/felogin and benefits from TYPO3 security and maintenance updates.
 
 TYPO3/felogin login page:
 
 - Redirects to the configured login page UID.
 - Sends `return_url` and `redirect_url`.
 - Requires the felogin plugin redirect mode `Defined by GET/POST Parameters`.
+
+PPL inline login:
+
+- Shows a login form directly before the DeepL element.
+- Can authenticate allowed frontend users and, if enabled, backend users.
+- Logout returns to the protected PPL page and shows the inline login again.
 
 Custom site header login links are outside of the extension redirect flow. If they should return to the protected DeepL page, they need their own valid redirect handling.
 
