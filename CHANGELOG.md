@@ -1,10 +1,5 @@
 # Changelog
 
-## Unreleased
-
-- Changed the frontend access default to `Use Login by Page ID`.
-- Marked TYPO3/felogin login page mode as the recommended frontend access mode.
-
 ## 12.4.1
 
 - Delegated V3 language, glossary, style-rule and custom-instruction configuration to `ppl_deepl_v3_requests`.

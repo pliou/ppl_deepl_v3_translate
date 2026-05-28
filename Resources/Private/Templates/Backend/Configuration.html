@@ -3,6 +3,13 @@
         <div class="ppl-deepl-v3__head">
             <h1><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:config.title" /></h1>
             <p><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:config.intro.v3" /></p>
+            <div class="ppl-deepl-v3__head-meta" aria-label="{f:translate(key: 'LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:config.statusLabel')}">
+                <span class="ppl-deepl-v3__chip ppl-deepl-v3__chip--info"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:status.product" /></span>
+                <f:if condition="{authKeyConfigured}">
+                    <f:then><span class="ppl-deepl-v3__chip ppl-deepl-v3__chip--success"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:config.apiReady" /></span></f:then>
+                    <f:else><span class="ppl-deepl-v3__chip ppl-deepl-v3__chip--warning"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:config.apiKeyMissing" /></span></f:else>
+                </f:if>
+            </div>
         </div>
 
         <f:for each="{messages}" as="message">

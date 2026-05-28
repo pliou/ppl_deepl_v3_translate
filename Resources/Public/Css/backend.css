@@ -17,6 +17,18 @@
   --ppl-management-danger: #b42318;
   --ppl-management-danger-soft: #fff1f1;
   --ppl-management-shadow: 0 18px 42px rgba(15, 23, 42, 0.07);
+  --ppl-management-icon-translate: url("../Icons/PplUi/translate.svg");
+  --ppl-management-icon-file: url("../Icons/PplUi/file-translation.svg");
+  --ppl-management-icon-configuration: url("../Icons/PplUi/configuration.svg");
+  --ppl-management-icon-glossary: url("../Icons/PplUi/glossary.svg");
+  --ppl-management-icon-quota: url("../Icons/PplUi/quota.svg");
+  --ppl-management-icon-language: url("../Icons/PplUi/language.svg");
+  --ppl-management-icon-source: url("../Icons/PplUi/source.svg");
+  --ppl-management-icon-target: url("../Icons/PplUi/target.svg");
+  --ppl-management-icon-copy: url("../Icons/PplUi/copy.svg");
+  --ppl-management-icon-success: url("../Icons/PplUi/success.svg");
+  --ppl-management-icon-warning: url("../Icons/PplUi/warning.svg");
+  --ppl-management-icon-error: url("../Icons/PplUi/error.svg");
 }
 
 html,
@@ -60,7 +72,7 @@ body,
 .ppl-deepl__head,
 .ppl-deepl-v3__head {
   display: grid;
-  grid-template-columns: 44px minmax(0, 1fr);
+  grid-template-columns: 48px minmax(0, 1fr) auto;
   gap: 16px;
   align-items: center;
   margin: 0 0 22px;
@@ -69,13 +81,12 @@ body,
 .ppl-deepl__head::before,
 .ppl-deepl-v3__head::before {
   content: "";
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   border: 1px solid #c9dcf4;
   border-radius: 8px;
-  background:
-    linear-gradient(135deg, var(--ppl-management-primary) 0%, #54a1ff 58%, var(--ppl-management-teal) 100%);
-  box-shadow: 0 12px 26px rgba(31, 102, 209, 0.22);
+  background: #ffffff var(--ppl-management-icon-translate) center / 30px 30px no-repeat;
+  box-shadow: 0 12px 26px rgba(31, 102, 209, 0.14);
 }
 
 .ppl-deepl__head h1,
@@ -98,6 +109,68 @@ body,
   line-height: 1.5;
 }
 
+.ppl-deepl-v3__head-meta {
+  align-items: center;
+  align-self: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  grid-column: 3;
+  grid-row: 1 / span 2;
+  justify-content: flex-end;
+}
+
+.ppl-deepl-v3__chip {
+  align-items: center;
+  border: 1px solid var(--ppl-management-border);
+  border-radius: 999px;
+  display: inline-flex;
+  font-size: 11px;
+  font-weight: 800;
+  gap: 6px;
+  min-height: 28px;
+  padding: 5px 9px;
+  white-space: nowrap;
+}
+
+.ppl-deepl-v3__chip::before {
+  background: currentColor;
+  content: "";
+  display: inline-block;
+  height: 14px;
+  -webkit-mask: var(--ppl-management-icon-translate) center / contain no-repeat;
+  mask: var(--ppl-management-icon-translate) center / contain no-repeat;
+  width: 14px;
+}
+
+.ppl-deepl-v3__chip--info {
+  background: #eef6ff;
+  border-color: #c9ddf7;
+  color: var(--ppl-management-primary-strong);
+}
+
+.ppl-deepl-v3__chip--success {
+  background: var(--ppl-management-success-soft);
+  border-color: #a9dfbf;
+  color: var(--ppl-management-success);
+}
+
+.ppl-deepl-v3__chip--success::before {
+  -webkit-mask-image: var(--ppl-management-icon-success);
+  mask-image: var(--ppl-management-icon-success);
+}
+
+.ppl-deepl-v3__chip--warning {
+  background: var(--ppl-management-warning-soft);
+  border-color: #f1cf9e;
+  color: var(--ppl-management-warning);
+}
+
+.ppl-deepl-v3__chip--warning::before {
+  -webkit-mask-image: var(--ppl-management-icon-warning);
+  mask-image: var(--ppl-management-icon-warning);
+}
+
 .ppl-deepl__tabs,
 .ppl-deepl-v3__tabs {
   display: flex;
@@ -114,6 +187,72 @@ body,
 .ppl-deepl__tab,
 .ppl-deepl-v3__tab {
   min-width: 132px;
+  gap: 7px;
+}
+
+.ppl-deepl-v3__tab::before,
+.ppl-deepl-v3__copy::before,
+.ppl-deepl-v3__download::before,
+.ppl-deepl-v3 button[data-role="deepl-submit"]::before,
+.ppl-deepl-v3__card-head strong::before,
+.ppl-deepl-v3__language-group-head strong::before,
+.ppl-deepl-v3__notice::before,
+.ppl-deepl-v3__error::before,
+.ppl-deepl-v3__success::before {
+  background: currentColor;
+  content: "";
+  display: inline-block;
+  flex: 0 0 auto;
+  height: 16px;
+  -webkit-mask: var(--ppl-management-icon-translate) center / contain no-repeat;
+  mask: var(--ppl-management-icon-translate) center / contain no-repeat;
+  width: 16px;
+}
+
+.ppl-deepl-v3__tab[data-scroll-anchor="config-glossaries"]::before,
+#config-glossaries .ppl-deepl-v3__card-head strong::before {
+  -webkit-mask-image: var(--ppl-management-icon-glossary);
+  mask-image: var(--ppl-management-icon-glossary);
+}
+
+.ppl-deepl-v3__tab[data-scroll-anchor="config-style-rules"]::before,
+#config-style-rules .ppl-deepl-v3__card-head strong::before {
+  -webkit-mask-image: var(--ppl-management-icon-configuration);
+  mask-image: var(--ppl-management-icon-configuration);
+}
+
+.ppl-deepl-v3__tab[data-scroll-anchor="config-languages"]::before,
+#config-languages .ppl-deepl-v3__card-head strong::before,
+.ppl-deepl-v3__language-group-head strong::before {
+  -webkit-mask-image: var(--ppl-management-icon-language);
+  mask-image: var(--ppl-management-icon-language);
+}
+
+.ppl-deepl-v3__tab[data-scroll-anchor="config-access"]::before,
+#config-access .ppl-deepl-v3__card-head strong::before {
+  -webkit-mask-image: var(--ppl-management-icon-configuration);
+  mask-image: var(--ppl-management-icon-configuration);
+}
+
+.ppl-deepl-v3__copy::before {
+  -webkit-mask-image: var(--ppl-management-icon-copy);
+  mask-image: var(--ppl-management-icon-copy);
+}
+
+.ppl-deepl-v3__download::before,
+.ppl-deepl-v3__success::before {
+  -webkit-mask-image: var(--ppl-management-icon-success);
+  mask-image: var(--ppl-management-icon-success);
+}
+
+.ppl-deepl-v3__error::before {
+  -webkit-mask-image: var(--ppl-management-icon-error);
+  mask-image: var(--ppl-management-icon-error);
+}
+
+.ppl-deepl-v3__notice::before {
+  -webkit-mask-image: var(--ppl-management-icon-warning);
+  mask-image: var(--ppl-management-icon-warning);
 }
 
 .ppl-deepl .btn,
@@ -127,6 +266,7 @@ body,
   justify-content: center;
   min-height: 40px;
   border-radius: 6px;
+  gap: 7px;
   font: inherit;
   font-weight: 750;
   line-height: 1.2;
@@ -183,6 +323,12 @@ body,
   border-radius: 8px;
   background: var(--ppl-management-surface);
   box-shadow: var(--ppl-management-shadow);
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.ppl-deepl-v3__card:hover {
+  border-color: var(--ppl-management-border-strong);
+  box-shadow: 0 20px 48px rgba(15, 23, 42, 0.09);
 }
 
 .ppl-deepl__card-head,
@@ -201,9 +347,12 @@ body,
 
 .ppl-deepl__card-head strong,
 .ppl-deepl-v3__card-head strong {
+  align-items: center;
   color: #0f172a;
+  display: inline-flex;
   font-size: 14px;
   font-weight: 750;
+  gap: 8px;
 }
 
 .ppl-deepl__card-body,
@@ -251,6 +400,11 @@ body,
   gap: 12px;
   align-items: center;
   justify-content: space-between;
+}
+
+.ppl-deepl-v3__field-head {
+  border-bottom: 1px solid var(--ppl-management-border);
+  padding-bottom: 8px;
 }
 
 .ppl-deepl label,
@@ -351,6 +505,8 @@ body,
   flex-wrap: wrap;
   gap: 12px;
   align-items: center;
+  border-top: 1px solid var(--ppl-management-border);
+  padding-top: 16px;
 }
 
 .ppl-deepl__muted,
@@ -371,6 +527,10 @@ body,
   background: #ffffff;
   padding: 14px 16px;
   transition: border-color 120ms ease, box-shadow 120ms ease, background-color 120ms ease;
+}
+
+.ppl-deepl-v3__option > span {
+  min-width: 0;
 }
 
 .ppl-deepl__option:hover,
@@ -409,14 +569,23 @@ body,
   padding: 18px;
 }
 
+.ppl-deepl-v3__language-group-head {
+  border-bottom: 1px solid var(--ppl-management-border);
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+}
+
 .ppl-deepl__notice,
 .ppl-deepl-v3__notice,
 .ppl-deepl__error,
 .ppl-deepl-v3__error,
 .ppl-deepl__success,
 .ppl-deepl-v3__success {
+  align-items: flex-start;
   border: 1px solid var(--ppl-management-border);
   border-radius: 8px;
+  display: flex;
+  gap: 10px;
   margin: 16px 0;
   padding: 14px 16px;
   line-height: 1.45;
@@ -494,6 +663,16 @@ body,
   .ppl-deepl-v3 {
     width: calc(100vw - 32px);
   }
+
+  .ppl-deepl-v3__head {
+    grid-template-columns: 48px minmax(0, 1fr);
+  }
+
+  .ppl-deepl-v3__head-meta {
+    grid-column: 2;
+    grid-row: 3;
+    justify-content: flex-start;
+  }
 }
 
 @media (max-width: 860px) {
@@ -505,6 +684,18 @@ body,
   .ppl-deepl__head,
   .ppl-deepl-v3__head {
     grid-template-columns: 1fr;
+  }
+
+  .ppl-deepl__head h1,
+  .ppl-deepl-v3__head h1,
+  .ppl-deepl__head p,
+  .ppl-deepl-v3__head p,
+  .ppl-deepl-v3__head-meta {
+    grid-column: 1;
+  }
+
+  .ppl-deepl-v3__head-meta {
+    grid-row: auto;
   }
 
   .ppl-deepl__grid,

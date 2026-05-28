@@ -46,6 +46,7 @@
             <trans-unit id="message.copied"><source>Copied</source><target>Kopiert</target></trans-unit>
             <trans-unit id="message.sameLanguage"><source>Target language must not be the source language.</source><target>Zielsprache darf nicht Ausgangssprache sein.</target></trans-unit>
             <trans-unit id="message.noGlossaryForCombination"><source>No glossary is approved for this language combination.</source><target>Kein Glossar für diese Sprachkombination freigegeben.</target></trans-unit>
+            <trans-unit id="status.product"><source>DeepL v3</source><target>DeepL v3</target></trans-unit>
             <trans-unit id="file.title.v2"><source>DeepL V2 File Translation</source><target>DeepL V2 Dateiübersetzung</target></trans-unit>
             <trans-unit id="file.title.v3"><source>DeepL V3 File Translation</source><target>DeepL V3 Dateiübersetzung</target></trans-unit>
             <trans-unit id="file.intro"><source>Upload a file, choose source and target language, then start the translation.</source><target>Datei hochladen, Ausgangs- und Zielsprache wählen und die Übersetzung starten.</target></trans-unit>
@@ -93,6 +94,9 @@
             <trans-unit id="wizard.v3.file.description"><source>File translation with DeepL V3 as a frontend plugin.</source><target>Dateiübersetzung mit DeepL V3 als Frontend-Plugin.</target></trans-unit>
             <trans-unit id="backend.title.v3"><source>PPL DeepL V3 Translation</source><target>PPL DeepL V3 Übersetzung</target></trans-unit>
             <trans-unit id="backend.intro.v3"><source>Text and file translation with DeepL V3 controls, V3 glossaries and V3 style rules.</source><target>Text- und Dateiübersetzung mit DeepL V3-Steuerung, V3-Glossaren und V3-Stilregeln.</target></trans-unit>
+            <trans-unit id="backend.workspaceStatus"><source>DeepL v3 workspace status</source><target>Status des DeepL v3 Arbeitsbereichs</target></trans-unit>
+            <trans-unit id="backend.statusTextTranslation"><source>Text translation</source><target>Textübersetzung</target></trans-unit>
+            <trans-unit id="backend.statusFileTranslation"><source>File translation</source><target>Dateiübersetzung</target></trans-unit>
             <trans-unit id="backend.translationSection"><source>Translation</source><target>Übersetzung</target></trans-unit>
             <trans-unit id="backend.fileTranslationSection"><source>File translation</source><target>Dateiübersetzung</target></trans-unit>
             <trans-unit id="backend.copy"><source>Copy</source><target>Kopieren</target></trans-unit>
@@ -117,6 +121,9 @@
             <trans-unit id="backend.showLogoutDescription"><source>Shows a logout action in created DeepL frontend elements when a user is signed in.</source><target>Zeigt in angelegten DeepL-Frontend-Elementen eine Logout-Aktion an, wenn ein Benutzer angemeldet ist.</target></trans-unit>
             <trans-unit id="config.title"><source>PPL DeepL V3 Configuration</source><target>PPL DeepL V3 Konfiguration</target></trans-unit>
             <trans-unit id="config.intro.v3"><source>Fetch V3 languages, V3 glossaries and V3 style rules, store them locally and approve them for selection.</source><target>V3-Sprachen, V3-Glossare und V3-Stilregeln abfragen, lokal speichern und für die Auswahl freigeben.</target></trans-unit>
+            <trans-unit id="config.statusLabel"><source>DeepL v3 configuration status</source><target>DeepL v3 Konfigurationsstatus</target></trans-unit>
+            <trans-unit id="config.apiReady"><source>API ready</source><target>API bereit</target></trans-unit>
+            <trans-unit id="config.apiKeyMissing"><source>API key missing</source><target>API-Key fehlt</target></trans-unit>
             <trans-unit id="config.storedLocal"><source>stored locally</source><target>lokal gespeichert</target></trans-unit>
             <trans-unit id="config.languages"><source>Languages</source><target>Sprachen</target></trans-unit>
             <trans-unit id="config.selectedLanguages"><source>Selected languages</source><target>Ausgewählte Sprachen</target></trans-unit>
