@@ -18,6 +18,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class DeeplController extends ActionController
 {
+    private const JSON_FLAGS = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_THROW_ON_ERROR;
+
     public function interfaceAction(): ResponseInterface
     {
         $frontendAccessService = GeneralUtility::makeInstance(FrontendAccessService::class);
@@ -157,7 +159,7 @@ class DeeplController extends ActionController
         $this->view->assignMultiple([
             'apiCapabilities' => $translationService->getApiCapabilities(),
             'frontendAccessHeader' => $frontendAccessService->renderAccessHeader($this->request),
-            'frontendControlDataJson' => json_encode($frontendControlData, JSON_THROW_ON_ERROR),
+            'frontendControlDataJson' => $this->encodeJson($frontendControlData),
             'custom_instructions' => $customInstructions,
             'textarea' => $inputText,
             'translatedText' => $translatedText,
@@ -173,16 +175,16 @@ class DeeplController extends ActionController
             'targetLanguageLabel' => $targetLanguages[$selectedTargetLanguage] ?? $languages[$selectedTargetLanguage] ?? 'English (UK)',
             'targetLanguageCode' => $selectedTargetLanguage,
             'styleRuleOptions' => $styleRuleOptions,
-            'styleRuleOptionsJson' => json_encode((object)$styleRuleService->getStyleRuleDisplayOptions(), JSON_THROW_ON_ERROR),
-            'styleRuleOptionsByLanguageJson' => json_encode((object)$styleRuleService->getStyleRuleOptionsByLanguage(), JSON_THROW_ON_ERROR),
+            'styleRuleOptionsJson' => $this->encodeJson((object)$styleRuleService->getStyleRuleDisplayOptions()),
+            'styleRuleOptionsByLanguageJson' => $this->encodeJson((object)$styleRuleService->getStyleRuleOptionsByLanguage()),
             'style_rule_id' => $selectedStyleRuleId,
             'selectionMode' => $selectionMode,
             'selectionLabel' => $selectionLabel,
             'sameLanguageSelected' => $this->isSameLanguagePair($languageService, $selectedSourceLanguage, $selectedTargetLanguage),
             'glossaryAvailable' => $glossaryService->hasGlossaryForLanguagePair($selectedSourceLanguage, $selectedTargetLanguage),
-            'glossaryCombinationsJson' => json_encode((object)$glossaryService->getGlossaryCombinations(), JSON_THROW_ON_ERROR),
+            'glossaryCombinationsJson' => $this->encodeJson((object)$glossaryService->getGlossaryCombinations()),
             'glossaryOptions' => $glossaryOptions,
-            'glossaryOptionsByCombinationJson' => json_encode((object)$glossaryOptionsByCombination, JSON_THROW_ON_ERROR),
+            'glossaryOptionsByCombinationJson' => $this->encodeJson((object)$glossaryOptionsByCombination),
             'glossary_id' => $selectedGlossaryId,
         ]);
 
@@ -202,5 +204,10 @@ class DeeplController extends ActionController
     private function isSameLanguagePair(DeeplLanguageService $languageService, string $sourceLanguage, string $targetLanguage): bool
     {
         return $languageService->normalizeGlossaryLanguage($sourceLanguage) === $languageService->normalizeGlossaryLanguage($targetLanguage);
+    }
+
+    private function encodeJson(mixed $data): string
+    {
+        return (string)json_encode($data, self::JSON_FLAGS);
     }
 }

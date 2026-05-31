@@ -7,7 +7,7 @@ defined('TYPO3') or die();
     'Deepl',
     [\Ppl\PplDeeplV3Translate\Controller\DeeplController::class => 'interface'],
     [\Ppl\PplDeeplV3Translate\Controller\DeeplController::class => 'interface'],
-    \TYPO3\CMS\Extbase\Utility\ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT
+    \TYPO3\CMS\Extbase\Utility\ExtensionUtility::PLUGIN_TYPE_PLUGIN
 );
 
 \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
@@ -36,7 +36,6 @@ $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['extbase']['extensions']['PplDeeplV3Trans
 
 foreach ([
     'ppl_deepl_logout',
-    'ppl_deepl_logintype',
     'return_url',
     'redirect_url',
     'logintype',

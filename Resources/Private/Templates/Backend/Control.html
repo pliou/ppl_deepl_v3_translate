@@ -32,6 +32,7 @@
                     <div class="ppl-deepl-v3__card-body">
                         <form method="post" action="{routeTranslation}" id="pplDeeplTextForm">
                             <input type="hidden" name="module_action" value="translate_text">
+                            <input type="hidden" name="form_token" value="{formToken}">
                             <input type="hidden" name="active_tab" value="translation">
 
                             <div class="ppl-deepl-v3__grid">
@@ -155,6 +156,7 @@
                     <div class="ppl-deepl-v3__card-body">
                         <form method="post" action="{routeFile}" enctype="multipart/form-data" id="pplDeeplFileForm">
                             <input type="hidden" name="module_action" value="translate_file">
+                            <input type="hidden" name="form_token" value="{formToken}">
                             <input type="hidden" name="active_tab" value="file">
 
                             <div class="ppl-deepl-v3__grid">

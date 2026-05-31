@@ -16,7 +16,7 @@ The extension provides the product UI, TYPO3 controllers, templates and frontend
 - Local approval workflow for fetched DeepL V3 style rules.
 - Target-language filtering for glossaries and style rules.
 - Optional custom instructions for text translation.
-- Frontend access control with TYPO3/felogin login page mode by default, plus PPL inline login as an alternative.
+- Frontend access control through TYPO3/felogin login page redirects.
 
 ## V3 Architecture
 
@@ -37,18 +37,19 @@ The request package owns the DeepL REST details:
 - HTTP client calls.
 - DeepL V3 response handling.
 
-## Difference To V2
+## Relationship To HDA DeepL V2
 
-V2 and V3 are intentionally separate extensions.
+PPL DeepL V3 Translate builds on the product and workflow foundation of HDA DeepL V2 Translate. The frontend elements, backend modules, language approval flow, glossary approval flow and access configuration stay aligned where possible, but V2 and V3 remain separate TYPO3 extensions at Composer, namespace, storage and API-client level.
 
-V2 package:
+HDA DeepL V2 package:
 
-- Extension key: `ppl_deepl_v2_translate`
-- Composer package: `ppl/ppl-deepl-v2-translate`
-- Namespace: `Ppl\PplDeeplV2Translate`
+- Extension key: `hda_deepl_v2_translate`
+- Composer package: `hda-ppl/hda-deepl-v2-translate`
+- Namespace: `HdaPpl\HdaDeeplV2Translate`
 - DeepL access: `deeplcom/deepl-php`
 - V3 request package: not required
 - V3-only controls: not available
+- Runtime storage: `var/hda_deepl_v2_translate/`
 
 V3 package:
 
@@ -59,7 +60,7 @@ V3 package:
 - Direct `DeepL\DeepLClient` usage: not used
 - V3-only controls: style rules and custom instructions
 
-Both extensions follow the same product surface where possible: similar modules, templates, language approval flow, glossary approval flow, frontend elements and access settings. The important difference is the API adapter and the V3-only capabilities.
+Historical V2 package names are intentionally not used in this release documentation. The important V3 differences are the request adapter, V3-only capabilities and separate V3 runtime storage.
 
 ## Requirements
 
@@ -134,7 +135,7 @@ File translation module:
 3. Upload a supported document.
 4. Start document translation.
 
-Supported file upload types are TXT, PDF, DOCX and PPTX.
+Supported file upload types are TXT, PDF, DOCX and PPTX. Uploads are limited to 10 MiB per file and are checked server-side by file size, extension, MIME type and document magic bytes before a translation request is started. The limit is defined in `DocumentUploadValidationService::MAX_UPLOAD_BYTES` for local project changes.
 
 ## Frontend Workflow
 
@@ -147,19 +148,13 @@ The frontend UI only exposes locally approved languages, glossaries and style ru
 
 ## Frontend Access
 
-The extension supports two frontend access modes. `Use Login by Page ID` is the default and recommended mode for most installations because it keeps authentication inside TYPO3/felogin and benefits from TYPO3 security and maintenance updates.
+The extension supports TYPO3/felogin login page redirects only. Stored legacy values such as `ppl_login` are normalized to `login_page`; `allowFrontendUsers` and `allowBackendUsers` are ignored and removed from saved extension configuration on the next frontend-access save.
 
 TYPO3/felogin login page:
 
 - Redirects to the configured login page UID.
 - Sends `return_url` and `redirect_url`.
 - Requires the felogin plugin redirect mode `Defined by GET/POST Parameters`.
-
-PPL inline login:
-
-- Shows a login form directly before the DeepL element.
-- Can authenticate allowed frontend users and, if enabled, backend users.
-- Logout returns to the protected PPL page and shows the inline login again.
 
 Custom site header login links are outside of the extension redirect flow. If they should return to the protected DeepL page, they need their own valid redirect handling.
 
@@ -178,14 +173,17 @@ Existing files from `var/ppl_deepl_v3_translate/` are migrated by the request se
 
 - Do not commit DeepL API keys.
 - Do not expose backend-only modules to unauthenticated users.
-- Frontend users should use TYPO3-compatible password hashes, for example passwords created or changed in the TYPO3 backend.
+- Frontend access is delegated to TYPO3/felogin. This package no longer performs direct frontend-user or backend-user password checks and no longer sets a PPL frontend-login cookie.
+- Backend POST actions use TYPO3 FormProtection tokens for configuration saves, approval writes, backend text translation and backend file translation.
+- File uploads are checked by size, extension, MIME type and magic bytes. Failed validation stops before a DeepL document translation request.
+- Translated files are still written below `fileadmin/user_upload/translated/` for download in this release line. That path is publicly reachable in typical TYPO3 webroots, so private signed downloads remain an open hardening task.
 - The translate package does not directly depend on `deeplcom/deepl-php`.
 - The translate package expects all V3 HTTP behavior to go through `ppl_deepl_v3_requests`.
 
 ## Release Line
 
-Version `12.4.x` is the TYPO3 12.4 release line.
+Version `12.4.x` is the TYPO3 12.4 release line. TYPO3 documents that v12 reached end-of-life on April 30, 2026 and requires TYPO3 ELTS for continued maintenance; see the official [TYPO3 v12 system requirements / EOL notice](https://docs.typo3.org/m/typo3/tutorial-getting-started/12.4/en-us/Installation/SystemRequirements/Index.html).
 
 ## License
 
-This extension is released under the GNU General Public License v2.0 or later, matching `ppl_rights_management` and the common TYPO3 extension license. See `LICENSE`.
+This extension is released under the GNU General Public License v2.0 or later, aligned with HDA DeepL V2 Translate and the common TYPO3 extension license. See `LICENSE`.

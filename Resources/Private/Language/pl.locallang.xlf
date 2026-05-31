@@ -1,0 +1,557 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.0">
+    <file source-language="en" datatype="plaintext" original="messages" date="2026-05-22T00:00:00Z" product-name="ppl_deepl_v3_translate" target-language="pl">
+        <header />
+        <body>
+            <trans-unit id="text.title.v3">
+                <source>DeepL Translation</source>
+                <target>DeepL Tłumaczenie</target>
+            </trans-unit>
+            <trans-unit id="text.intro">
+                <source>Translate text with configured languages, glossary options and writing controls.</source>
+                <target>Tłumacz tekst za pomocą skonfigurowanych języków, opcji glosariusza i kontroli pisania.</target>
+            </trans-unit>
+            <trans-unit id="text.inputCard">
+                <source>Input</source>
+                <target>Wejście</target>
+            </trans-unit>
+            <trans-unit id="text.outputCard">
+                <source>Output</source>
+                <target>Wyjście</target>
+            </trans-unit>
+            <trans-unit id="text.optionsCard">
+                <source>Options</source>
+                <target>Opcje</target>
+            </trans-unit>
+            <trans-unit id="text.inputLabel">
+                <source>Input text</source>
+                <target>Wprowadź tekst</target>
+            </trans-unit>
+            <trans-unit id="text.outputLabel">
+                <source>Translated text</source>
+                <target>Przetłumaczony tekst</target>
+            </trans-unit>
+            <trans-unit id="text.inputPlaceholder">
+                <source>Enter text to translate...</source>
+                <target>Wpisz tekst do przetłumaczenia...</target>
+            </trans-unit>
+            <trans-unit id="text.outputPlaceholder">
+                <source>The translation appears here...</source>
+                <target>Tłumaczenie pojawia się tutaj...</target>
+            </trans-unit>
+            <trans-unit id="text.copyInput">
+                <source>Copy input</source>
+                <target>Skopiuj dane wejściowe</target>
+            </trans-unit>
+            <trans-unit id="text.copyOutput">
+                <source>Copy translation</source>
+                <target>Kopiuj tłumaczenie</target>
+            </trans-unit>
+            <trans-unit id="text.translate">
+                <source>Translate</source>
+                <target>Przetłumacz</target>
+            </trans-unit>
+            <trans-unit id="text.optionIntro.v3">
+                <source>Choose source and target language. Optionally use one approved style rule and custom instructions.</source>
+                <target>Wybierz język źródłowy i docelowy. Opcjonalnie użyj jednej zatwierdzonej reguły stylu i niestandardowych instrukcji.</target>
+            </trans-unit>
+            <trans-unit id="field.sourceLanguage">
+                <source>Source language</source>
+                <target>Język źródłowy</target>
+            </trans-unit>
+            <trans-unit id="field.targetLanguage">
+                <source>Target language</source>
+                <target>Język docelowy</target>
+            </trans-unit>
+            <trans-unit id="field.glossary">
+                <source>Glossary</source>
+                <target>Glosariusz</target>
+            </trans-unit>
+            <trans-unit id="field.styleRule">
+                <source>Style rule</source>
+                <target>Zasada stylu</target>
+            </trans-unit>
+            <trans-unit id="field.customInstructions">
+                <source>Custom instructions</source>
+                <target>Niestandardowe instrukcje</target>
+            </trans-unit>
+            <trans-unit id="option.noGlossary">
+                <source>No glossary</source>
+                <target>Brak glosariusza</target>
+            </trans-unit>
+            <trans-unit id="option.disabled">
+                <source>Disabled</source>
+                <target>Niepełnosprawny</target>
+            </trans-unit>
+            <trans-unit id="hint.glossaryAvailable">
+                <source>Choose an approved glossary.</source>
+                <target>Wybierz zatwierdzony glosariusz.</target>
+            </trans-unit>
+            <trans-unit id="hint.noGlossary">
+                <source>No glossary approved.</source>
+                <target>Żaden glosariusz nie został zatwierdzony.</target>
+            </trans-unit>
+            <trans-unit id="hint.styleRuleAvailable">
+                <source>Choose an approved style rule.</source>
+                <target>Wybierz zatwierdzoną regułę stylu.</target>
+            </trans-unit>
+            <trans-unit id="hint.noStyleRule">
+                <source>No style rule approved.</source>
+                <target>Żadna reguła stylu nie została zatwierdzona.</target>
+            </trans-unit>
+            <trans-unit id="hint.noStyleRuleForTarget">
+                <source>Approved style rules exist, but none match the selected target language.</source>
+                <target>Istnieją zatwierdzone reguły stylu, ale żadna nie pasuje do wybranego języka docelowego.</target>
+            </trans-unit>
+            <trans-unit id="option.styleRuleWrongLanguage">
+                <source>not for this target language</source>
+                <target>nie dla tego języka docelowego</target>
+            </trans-unit>
+            <trans-unit id="badge.source">
+                <source>Source</source>
+                <target>Źródło</target>
+            </trans-unit>
+            <trans-unit id="badge.target">
+                <source>Target</source>
+                <target>Cel</target>
+            </trans-unit>
+            <trans-unit id="badge.glossaryActive">
+                <source>Glossary active</source>
+                <target>Słowniczek aktywny</target>
+            </trans-unit>
+            <trans-unit id="badge.glossaryInactive">
+                <source>Glossary disabled</source>
+                <target>Glosariusz wyłączony</target>
+            </trans-unit>
+            <trans-unit id="badge.styleRulePrefix">
+                <source>Style rule</source>
+                <target>Zasada stylu</target>
+            </trans-unit>
+            <trans-unit id="badge.styleRuleInactive">
+                <source>Style rule disabled</source>
+                <target>Reguła stylu wyłączona</target>
+            </trans-unit>
+            <trans-unit id="message.copied">
+                <source>Copied</source>
+                <target>Skopiowano</target>
+            </trans-unit>
+            <trans-unit id="message.sameLanguage">
+                <source>Target language must not be the source language.</source>
+                <target>Język docelowy nie może być językiem źródłowym.</target>
+            </trans-unit>
+            <trans-unit id="message.noGlossaryForCombination">
+                <source>No glossary is approved for this language combination.</source>
+                <target>Żaden słownik nie jest zatwierdzony dla tej kombinacji języków.</target>
+            </trans-unit>
+            <trans-unit id="status.product">
+                <source>DeepL v3</source>
+                <target>DeepL v3</target>
+            </trans-unit>
+            <trans-unit id="file.title.v3">
+                <source>DeepL File Translation</source>
+                <target>DeepL Tłumaczenie pliku</target>
+            </trans-unit>
+            <trans-unit id="file.intro">
+                <source>Upload a file, choose source and target language, then start the translation.</source>
+                <target>Prześlij plik, wybierz język źródłowy i docelowy, a następnie rozpocznij tłumaczenie.</target>
+            </trans-unit>
+            <trans-unit id="file.settingsCard">
+                <source>File translation</source>
+                <target>Tłumaczenie pliku</target>
+            </trans-unit>
+            <trans-unit id="file.choose">
+                <source>Choose file</source>
+                <target>Wybierz plik</target>
+            </trans-unit>
+            <trans-unit id="file.allowedFormats">
+                <source>Allowed formats: TXT, PDF, DOCX, PPTX. Maximum size: 10 MiB.</source>
+                <target>Dozwolone formaty: TXT, PDF, DOCX, PPTX. Maksymalny rozmiar: 10 MiB.</target>
+            </trans-unit>
+            <trans-unit id="file.selected">
+                <source>Selected file</source>
+                <target>Wybrany plik</target>
+            </trans-unit>
+            <trans-unit id="file.remove">
+                <source>Remove file</source>
+                <target>Usuń plik</target>
+            </trans-unit>
+            <trans-unit id="file.translated">
+                <source>Translated file</source>
+                <target>Przetłumaczony plik</target>
+            </trans-unit>
+            <trans-unit id="file.status">
+                <source>Status</source>
+                <target>Stan</target>
+            </trans-unit>
+            <trans-unit id="file.none">
+                <source>No translated file available yet</source>
+                <target>Nie jest jeszcze dostępny żaden przetłumaczony plik</target>
+            </trans-unit>
+            <trans-unit id="file.download">
+                <source>Download translated file</source>
+                <target>Pobierz przetłumaczony plik</target>
+            </trans-unit>
+            <trans-unit id="file.downloadNamed">
+                <source>Download %s</source>
+                <target>Pobierz %s</target>
+            </trans-unit>
+            <trans-unit id="file.translate">
+                <source>Translate file</source>
+                <target>Przetłumacz plik</target>
+            </trans-unit>
+            <trans-unit id="error.missingText">
+                <source>Please enter text.</source>
+                <target>Proszę wpisać tekst.</target>
+            </trans-unit>
+            <trans-unit id="error.sameLanguage">
+                <source>Target language must not be the source language.</source>
+                <target>Język docelowy nie może być językiem źródłowym.</target>
+            </trans-unit>
+            <trans-unit id="error.missingAuthKey.v3">
+                <source>No DeepL auth key is configured.</source>
+                <target>Nie skonfigurowano klucza autoryzacji DeepL.</target>
+            </trans-unit>
+            <trans-unit id="error.translation">
+                <source>Translation error: %s</source>
+                <target>Błąd tłumaczenia: %s</target>
+            </trans-unit>
+            <trans-unit id="error.invalidFileType">
+                <source>Unsupported file type. Allowed: TXT, PDF, DOCX, PPTX.</source>
+                <target>Nieobsługiwany typ pliku. Dozwolone: ​​TXT, PDF, DOCX, PPTX.</target>
+            </trans-unit>
+            <trans-unit id="error.invalidUpload">
+                <source>The uploaded file is empty or could not be read.</source>
+                <target>Przesłany plik jest pusty lub nie można go odczytać.</target>
+            </trans-unit>
+            <trans-unit id="error.fileTooLarge">
+                <source>The uploaded file is larger than the configured upload limit.</source>
+                <target>Przesłany plik jest większy niż skonfigurowany limit przesyłania.</target>
+            </trans-unit>
+            <trans-unit id="error.fileContentMismatch">
+                <source>The uploaded file content does not match the selected file type.</source>
+                <target>Treść przesłanego pliku nie odpowiada wybranemu typowi pliku.</target>
+            </trans-unit>
+            <trans-unit id="error.uploadSaveFailed">
+                <source>The uploaded file could not be saved.</source>
+                <target>Nie można zapisać przesłanego pliku.</target>
+            </trans-unit>
+            <trans-unit id="error.documentTranslation">
+                <source>Document translation error: %s</source>
+                <target>Błąd w tłumaczeniu dokumentu: %s</target>
+            </trans-unit>
+            <trans-unit id="access.loginRequired">
+                <source>Login required</source>
+                <target>Wymagane logowanie</target>
+            </trans-unit>
+            <trans-unit id="access.invalidLogoutRequest">
+                <source>The logout request could not be verified.</source>
+                <target>Nie można zweryfikować żądania wylogowania.</target>
+            </trans-unit>
+            <trans-unit id="access.signedInAs">
+                <source>Signed in as %s</source>
+                <target>Zalogowano jako %s</target>
+            </trans-unit>
+            <trans-unit id="access.logout">
+                <source>Sign out</source>
+                <target>Wyloguj się</target>
+            </trans-unit>
+            <trans-unit id="access.loginPageMissing">
+                <source>Please configure a login page. For redirect back, enable GET/POST parameter redirect mode in the felogin plugin.</source>
+                <target>Skonfiguruj stronę logowania. Aby przekierować z powrotem, włącz tryb przekierowania parametru GET/POST we wtyczce felogin.</target>
+            </trans-unit>
+            <trans-unit id="module.root.title">
+                <source>PPL DeepL V3</source>
+                <target>PPL DeepL V3</target>
+            </trans-unit>
+            <trans-unit id="module.root.description">
+                <source>PPL DeepL V3 translations.</source>
+                <target>PPL DeepL V3 tłumaczenia.</target>
+            </trans-unit>
+            <trans-unit id="module.configuration.title">
+                <source>Configuration</source>
+                <target>Konfiguracja</target>
+            </trans-unit>
+            <trans-unit id="module.configuration.description.v3">
+                <source>Manage DeepL languages, glossaries and style rules.</source>
+                <target>Zarządzaj językami, glosariuszami i zasadami stylu DeepL.</target>
+            </trans-unit>
+            <trans-unit id="module.v3.translation.title">
+                <source>Translation</source>
+                <target>Tłumaczenie</target>
+            </trans-unit>
+            <trans-unit id="module.v3.translation.description">
+                <source>DeepL text translation.</source>
+                <target>DeepL tłumaczenie tekstu.</target>
+            </trans-unit>
+            <trans-unit id="module.v3.file.title">
+                <source>File Translation</source>
+                <target>Tłumaczenie plików</target>
+            </trans-unit>
+            <trans-unit id="module.v3.file.description">
+                <source>DeepL file translation.</source>
+                <target>DeepL tłumaczenie pliku.</target>
+            </trans-unit>
+            <trans-unit id="plugin.v3.text.title">
+                <source>DeepL V3 translator</source>
+                <target>DeepL V3 tłumacz</target>
+            </trans-unit>
+            <trans-unit id="plugin.v3.file.title">
+                <source>DeepL V3 file translation</source>
+                <target>DeepL V3 tłumaczenie pliku</target>
+            </trans-unit>
+            <trans-unit id="plugin.v3.static.title">
+                <source>PPL - DeepL V3 translator</source>
+                <target>PPL - DeepL V3 tłumacz</target>
+            </trans-unit>
+            <trans-unit id="wizard.v3.text.description">
+                <source>Text translation with DeepL V3 as a frontend plugin.</source>
+                <target>Tłumaczenie tekstu za pomocą DeepL V3 jako wtyczki frontendowej.</target>
+            </trans-unit>
+            <trans-unit id="wizard.v3.file.description">
+                <source>File translation with DeepL V3 as a frontend plugin.</source>
+                <target>Tłumaczenie plików za pomocą DeepL V3 jako wtyczki frontendowej.</target>
+            </trans-unit>
+            <trans-unit id="backend.title.v3">
+                <source>PPL DeepL V3 Translation</source>
+                <target>PPL DeepL V3 Tłumaczenie</target>
+            </trans-unit>
+            <trans-unit id="backend.intro.v3">
+                <source>Text and file translation with DeepL controls, glossaries and style rules.</source>
+                <target>Tłumaczenie tekstu i plików za pomocą kontrolek DeepL, glosariuszy i reguł stylu.</target>
+            </trans-unit>
+            <trans-unit id="backend.workspaceStatus">
+                <source>DeepL v3 workspace status</source>
+                <target>DeepL stan obszaru roboczego v3</target>
+            </trans-unit>
+            <trans-unit id="backend.statusTextTranslation">
+                <source>Text translation</source>
+                <target>Tłumaczenie tekstu</target>
+            </trans-unit>
+            <trans-unit id="backend.statusFileTranslation">
+                <source>File translation</source>
+                <target>Tłumaczenie pliku</target>
+            </trans-unit>
+            <trans-unit id="backend.translationSection">
+                <source>Translation</source>
+                <target>Tłumaczenie</target>
+            </trans-unit>
+            <trans-unit id="backend.fileTranslationSection">
+                <source>File translation</source>
+                <target>Tłumaczenie pliku</target>
+            </trans-unit>
+            <trans-unit id="backend.copy">
+                <source>Copy</source>
+                <target>Kopiuj</target>
+            </trans-unit>
+            <trans-unit id="backend.translatedFile">
+                <source>Translated file:</source>
+                <target>Przetłumaczony plik:</target>
+            </trans-unit>
+            <trans-unit id="backend.loginBehavior">
+                <source>Frontend login behavior</source>
+                <target>Zachowanie podczas logowania do frontonu</target>
+            </trans-unit>
+            <trans-unit id="backend.frontendLoginApplies">
+                <source>Uses TYPO3/felogin for created DeepL frontend elements</source>
+                <target>Używa TYPO3/felogin dla utworzonych elementów frontendu DeepL</target>
+            </trans-unit>
+            <trans-unit id="backend.useLoginByPageId">
+                <source>Use Login by Page ID</source>
+                <target>Użyj opcji Zaloguj się przez stronę ID</target>
+            </trans-unit>
+            <trans-unit id="backend.loginPageId">
+                <source>Login page ID</source>
+                <target>Strona logowania ID</target>
+            </trans-unit>
+            <trans-unit id="backend.loginPageDescription">
+                <source>Only supported frontend access mode. Uses TYPO3/felogin and benefits from TYPO3 security and maintenance updates.</source>
+                <target>Obsługiwany tylko tryb dostępu do frontonu. Używa TYPO3/felogin i korzysta z aktualizacji zabezpieczeń i konserwacji TYPO3.</target>
+            </trans-unit>
+            <trans-unit id="backend.loginPageHint">
+                <source>Enter the page UID of the felogin page. Leave empty only when access should show a configuration error.</source>
+                <target>Wprowadź stronę UID strony felogin. Pozostaw puste tylko wtedy, gdy dostęp powinien pokazać błąd konfiguracji.</target>
+            </trans-unit>
+            <trans-unit id="backend.loginPageRedirectHint">
+                <source>The extension sends redirect_url and return_url to the login page. In the felogin plugin, enable Redirects &gt; Redirect Mode &gt; Defined by GET/POST Parameters so users return after login. For direct /login links, add After Login as a fallback redirect page.</source>
+                <target>Rozszerzenie wysyła redirect_url i return_url na stronę logowania. We wtyczce felogin włącz Przekierowania &gt; Tryb przekierowania &gt; Zdefiniowane przez parametry GET/POST, aby użytkownicy wracali po zalogowaniu. W przypadku linków bezpośrednich /login dodaj After Login jako awaryjną stronę przekierowania.</target>
+            </trans-unit>
+            <trans-unit id="backend.saveFrontendLoginBehavior">
+                <source>Save frontend login behavior</source>
+                <target>Zapisz zachowanie logowania do frontendu</target>
+            </trans-unit>
+            <trans-unit id="backend.logoutDisplay">
+                <source>Logout display</source>
+                <target>Wyświetlanie wylogowania</target>
+            </trans-unit>
+            <trans-unit id="backend.showLogout">
+                <source>Show logout action</source>
+                <target>Pokaż akcję wylogowania</target>
+            </trans-unit>
+            <trans-unit id="backend.showLogoutDescription">
+                <source>Shows a logout action in created DeepL frontend elements when a user is signed in.</source>
+                <target>Pokazuje akcję wylogowania w utworzonych elementach frontendu DeepL, gdy użytkownik jest zalogowany.</target>
+            </trans-unit>
+            <trans-unit id="config.title">
+                <source>PPL DeepL V3 Configuration</source>
+                <target>PPL DeepL V3 Konfiguracja</target>
+            </trans-unit>
+            <trans-unit id="config.intro.v3">
+                <source>Fetch languages, glossaries and style rules, store them locally and approve them for selection.</source>
+                <target>Pobieraj języki, glosariusze i reguły stylu, przechowuj je lokalnie i zatwierdzaj do wyboru.</target>
+            </trans-unit>
+            <trans-unit id="config.statusLabel">
+                <source>DeepL v3 configuration status</source>
+                <target>DeepL stan konfiguracji v3</target>
+            </trans-unit>
+            <trans-unit id="config.apiReady">
+                <source>API ready</source>
+                <target>API gotowy</target>
+            </trans-unit>
+            <trans-unit id="config.apiKeyMissing">
+                <source>API key missing</source>
+                <target>Brak klucza API</target>
+            </trans-unit>
+            <trans-unit id="config.storedLocal">
+                <source>stored locally</source>
+                <target>przechowywane lokalnie</target>
+            </trans-unit>
+            <trans-unit id="config.languages">
+                <source>Languages</source>
+                <target>Języki</target>
+            </trans-unit>
+            <trans-unit id="config.selectedLanguages">
+                <source>Selected languages</source>
+                <target>Wybrane języki</target>
+            </trans-unit>
+            <trans-unit id="config.otherLanguages">
+                <source>Other languages</source>
+                <target>Inne języki</target>
+            </trans-unit>
+            <trans-unit id="config.glossaries">
+                <source>Glossaries</source>
+                <target>Glosariusze</target>
+            </trans-unit>
+            <trans-unit id="config.styleRules">
+                <source>Style rules</source>
+                <target>Zasady stylu</target>
+            </trans-unit>
+            <trans-unit id="config.frontendAccess">
+                <source>Frontend access</source>
+                <target>Dostęp frontendowy</target>
+            </trans-unit>
+            <trans-unit id="config.fetchLanguages">
+                <source>Fetch languages from DeepL</source>
+                <target>Pobierz języki z DeepL</target>
+            </trans-unit>
+            <trans-unit id="config.fetchGlossaries">
+                <source>Fetch glossaries from DeepL</source>
+                <target>Pobierz glosariusze z DeepL</target>
+            </trans-unit>
+            <trans-unit id="config.fetchStyleRules">
+                <source>Fetch style rules from DeepL</source>
+                <target>Pobierz reguły stylu z DeepL</target>
+            </trans-unit>
+            <trans-unit id="config.saveApprovals">
+                <source>Save approvals</source>
+                <target>Zapisz zatwierdzenia</target>
+            </trans-unit>
+            <trans-unit id="config.selectAllLanguages">
+                <source>Select all languages</source>
+                <target>Wybierz wszystkie języki</target>
+            </trans-unit>
+            <trans-unit id="config.deselectAllLanguages">
+                <source>Deselect all languages</source>
+                <target>Odznacz wszystkie języki</target>
+            </trans-unit>
+            <trans-unit id="config.noLanguages">
+                <source>No languages stored yet. The predefined DeepL list is used.</source>
+                <target>Nie zapisano jeszcze żadnych języków. Używana jest predefiniowana lista DeepL.</target>
+            </trans-unit>
+            <trans-unit id="config.noGlossaries">
+                <source>No glossaries stored yet. Please fetch them from DeepL first.</source>
+                <target>Nie zapisano jeszcze żadnych glosariuszy. Najpierw pobierz je od DeepL.</target>
+            </trans-unit>
+            <trans-unit id="config.noStyleRules">
+                <source>No style rules stored yet. Please fetch them from DeepL first.</source>
+                <target>Nie zapisano jeszcze żadnych reguł stylu. Najpierw pobierz je od DeepL.</target>
+            </trans-unit>
+            <trans-unit id="config.entries">
+                <source>entries</source>
+                <target>wpisy</target>
+            </trans-unit>
+            <trans-unit id="message.frontendAccessSaved">
+                <source>Frontend access saved.</source>
+                <target>Dostęp do interfejsu został zapisany.</target>
+            </trans-unit>
+            <trans-unit id="message.frontendAccessSaveFailed">
+                <source>Frontend access could not be saved: %s</source>
+                <target>Nie można zapisać dostępu do frontonu: %s</target>
+            </trans-unit>
+            <trans-unit id="message.invalidFormToken">
+                <source>The form token is invalid. Please reload the module and try again.</source>
+                <target>Token formularza jest nieprawidłowy. Załaduj ponownie moduł i spróbuj ponownie.</target>
+            </trans-unit>
+            <trans-unit id="message.languagesSaved">
+                <source>%d language(s) saved.</source>
+                <target>Zapisano %d języki.</target>
+            </trans-unit>
+            <trans-unit id="message.languagesFound">
+                <source>%d language(s) found at DeepL.</source>
+                <target>%d języki znalezione w DeepL.</target>
+            </trans-unit>
+            <trans-unit id="message.languagesFetchFailed">
+                <source>Languages could not be fetched: %s</source>
+                <target>Nie można pobrać języków: %s</target>
+            </trans-unit>
+            <trans-unit id="message.languagesApproved">
+                <source>%d language(s) approved.</source>
+                <target>Zatwierdzono %d języki.</target>
+            </trans-unit>
+            <trans-unit id="message.glossariesSaved">
+                <source>%d glossary/glossaries saved, %d approved.</source>
+                <target>%d glosariusz/glosariusze zapisany, %d zatwierdzony.</target>
+            </trans-unit>
+            <trans-unit id="message.glossariesFound">
+                <source>%d glossary/glossaries found at DeepL.</source>
+                <target>%d słownik/glosariusze znalezione w DeepL.</target>
+            </trans-unit>
+            <trans-unit id="message.glossariesFetchFailed">
+                <source>Glossaries could not be fetched: %s</source>
+                <target>Nie można pobrać glosariuszy: %s</target>
+            </trans-unit>
+            <trans-unit id="message.glossariesApproved">
+                <source>%d glossary/glossaries approved.</source>
+                <target>%d glosariusz/glosariusze zostały zatwierdzone.</target>
+            </trans-unit>
+            <trans-unit id="message.styleRulesSaved">
+                <source>%d style rule(s) saved, %d approved.</source>
+                <target>Zapisano reguły stylu %d, zatwierdzono %d.</target>
+            </trans-unit>
+            <trans-unit id="message.styleRulesFound">
+                <source>%d style rule(s) found at DeepL.</source>
+                <target>Reguły stylu %d znalezione w DeepL.</target>
+            </trans-unit>
+            <trans-unit id="message.styleRulesFetchFailed">
+                <source>Style rules could not be fetched: %s</source>
+                <target>Nie można pobrać reguł stylu: %s</target>
+            </trans-unit>
+            <trans-unit id="message.styleRulesApproved">
+                <source>%d style rule(s) approved.</source>
+                <target>Zatwierdzono reguły stylu %d.</target>
+            </trans-unit>
+            <trans-unit id="error.missingFile">
+                <source>Please choose a file.</source>
+                <target>Proszę wybrać plik.</target>
+            </trans-unit>
+            
+            <trans-unit id="constants.apiBaseUrl">
+                <source>DeepL V3 API base URL</source>
+                <target>Bazowy adres URL API DeepL V3</target>
+            </trans-unit>
+            <trans-unit id="constants.glossaryPid">
+                <source>Glossary terms page ID</source>
+                <target>ID strony termin?w glosariusza</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

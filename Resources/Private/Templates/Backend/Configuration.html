@@ -54,13 +54,10 @@
                         <form method="post" action="{routeConfiguration}">
                             <input type="hidden" name="config_tab" value="frontend_access">
                             <input type="hidden" name="module_action" value="save_frontend_access">
+                            <input type="hidden" name="form_token" value="{formToken}">
 
                             <div class="ppl-deepl-v3__settings-grid ppl-deepl-v3__section">
-                                <label class="ppl-deepl-v3__option">
-                                    <f:if condition="{frontendAccessConfiguration.frontendAccessMode} == 'login_page'">
-                                        <f:then><input type="radio" name="frontend_access_mode" value="login_page" checked="checked"></f:then>
-                                        <f:else><input type="radio" name="frontend_access_mode" value="login_page"></f:else>
-                                    </f:if>
+                                <div class="ppl-deepl-v3__option">
                                     <span>
                                         <strong><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:backend.useLoginByPageId" /></strong>
                                         <br>
@@ -68,47 +65,6 @@
                                         <br>
                                         <span class="ppl-deepl-v3__muted"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:backend.loginPageRedirectHint" /></span>
                                     </span>
-                                </label>
-                                <label class="ppl-deepl-v3__option">
-                                    <f:if condition="{frontendAccessConfiguration.frontendAccessMode} == 'ppl_login'">
-                                        <f:then><input type="radio" name="frontend_access_mode" value="ppl_login" checked="checked"></f:then>
-                                        <f:else><input type="radio" name="frontend_access_mode" value="ppl_login"></f:else>
-                                    </f:if>
-                                    <span>
-                                        <strong><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:backend.usePplLogin" /></strong>
-                                        <br>
-                                        <span class="ppl-deepl-v3__muted"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:backend.loginPplDescription" /></span>
-                                    </span>
-                                </label>
-                            </div>
-
-                            <div class="ppl-deepl-v3__section">
-                                <strong><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:backend.allowedUserTypes" /></strong>
-                                <div class="ppl-deepl-v3__settings-grid ppl-deepl-v3__section">
-                                    <label class="ppl-deepl-v3__option">
-                                        <input type="hidden" name="allow_frontend_users" value="0">
-                                        <f:if condition="{frontendAccessConfiguration.allowFrontendUsers}">
-                                            <f:then><input type="checkbox" name="allow_frontend_users" value="1" checked="checked"></f:then>
-                                            <f:else><input type="checkbox" name="allow_frontend_users" value="1"></f:else>
-                                        </f:if>
-                                        <span>
-                                            <strong><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:backend.allowFrontendUsers" /></strong>
-                                            <br>
-                                            <span class="ppl-deepl-v3__muted"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:backend.allowFrontendUsersDescription" /></span>
-                                        </span>
-                                    </label>
-                                    <label class="ppl-deepl-v3__option">
-                                        <input type="hidden" name="allow_backend_users" value="0">
-                                        <f:if condition="{frontendAccessConfiguration.allowBackendUsers}">
-                                            <f:then><input type="checkbox" name="allow_backend_users" value="1" checked="checked"></f:then>
-                                            <f:else><input type="checkbox" name="allow_backend_users" value="1"></f:else>
-                                        </f:if>
-                                        <span>
-                                            <strong><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:backend.allowBackendUsers" /></strong>
-                                            <br>
-                                            <span class="ppl-deepl-v3__muted"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:backend.allowBackendUsersDescription" /></span>
-                                        </span>
-                                    </label>
                                 </div>
                             </div>
 
@@ -154,6 +110,7 @@
                             <div class="ppl-deepl-v3__card-body">
                                 <form method="post" action="{routeConfiguration}" id="pplDeeplV3LanguageForm">
                                     <input type="hidden" name="config_tab" value="languages">
+                                    <input type="hidden" name="form_token" value="{formToken}">
                                     <div class="ppl-deepl-v3__actions">
                                         <button class="btn btn-default" type="submit" name="module_action" value="fetch_languages" data-scroll-anchor="config-languages"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:config.fetchLanguages" /></button>
                                         <f:if condition="{languages}">
@@ -228,6 +185,7 @@
                             <div class="ppl-deepl-v3__card-body">
                                 <form method="post" action="{routeConfiguration}">
                                     <input type="hidden" name="config_tab" value="style_rules">
+                                    <input type="hidden" name="form_token" value="{formToken}">
                                     <div class="ppl-deepl-v3__actions">
                                         <button class="btn btn-default" type="submit" name="module_action" value="fetch_style_rules" data-scroll-anchor="config-style-rules"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:config.fetchStyleRules" /></button>
                                         <f:if condition="{styleRules}">
@@ -270,6 +228,7 @@
                             <div class="ppl-deepl-v3__card-body">
                                 <form method="post" action="{routeConfiguration}">
                                     <input type="hidden" name="config_tab" value="glossaries">
+                                    <input type="hidden" name="form_token" value="{formToken}">
                                     <div class="ppl-deepl-v3__actions">
                                         <button class="btn btn-default" type="submit" name="module_action" value="fetch_glossaries" data-scroll-anchor="config-glossaries"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:config.fetchGlossaries" /></button>
                                         <f:if condition="{glossaries}">

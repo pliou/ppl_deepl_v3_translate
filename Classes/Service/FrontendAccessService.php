@@ -6,28 +6,19 @@ namespace Ppl\PplDeeplV3Translate\Service;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use TYPO3\CMS\Core\Crypto\PasswordHashing\PasswordHashFactory;
-use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Http\HtmlResponse;
 use TYPO3\CMS\Core\Http\RedirectResponse;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 final class FrontendAccessService
 {
     private const EXTENSION_KEY = 'ppl_deepl_v3_translate';
-    private const COOKIE_NAME = 'ppl_deepl_login';
-    private const LOCAL_LOGOUT_COOKIE_NAME = 'ppl_deepl_logged_out';
-    private const COOKIE_TTL = 86400;
-    private const MODE_PPL_LOGIN = 'ppl_login';
     private const MODE_LOGIN_PAGE = 'login_page';
     private const GLOBAL_FRONTEND_ACCESS_SETTINGS = [
         'frontendAccessMode',
         'loginPageUid',
-        'allowFrontendUsers',
-        'allowBackendUsers',
         'showLogout',
     ];
 
@@ -36,100 +27,52 @@ final class FrontendAccessService
         ServerRequestInterface $request,
         UriBuilder $uriBuilder
     ): ?ResponseInterface {
-        $allowFrontendUsers = $this->getBooleanConfigurationValue($settings, 'allowFrontendUsers', true);
-        $allowBackendUsers = $this->getBooleanConfigurationValue($settings, 'allowBackendUsers', true);
-        $mode = $this->getFrontendAccessMode($settings);
-
         if ($this->isLogoutRequest($request)) {
             if (!$this->isSameOriginRequest($request)) {
                 return new HtmlResponse(
                     $this->renderNotice(
                         $this->translate('access.loginRequired'),
-                        $this->translate('access.loginFailed')
+                        $this->translate('access.invalidLogoutRequest')
                     ),
                     400
                 );
             }
 
             $returnUrl = $this->getSubmittedSafeReturnUrl($request) ?? $this->buildSafeReturnUrl($request);
-            $logoutUrl = $mode === self::MODE_PPL_LOGIN
-                ? $returnUrl
-                : $this->buildFrontendLogoutUrl($settings, $request, $uriBuilder, $returnUrl);
 
-            return (new RedirectResponse($logoutUrl, 303))
-                ->withHeader('Set-Cookie', $this->buildLogoutCookieHeader($request));
-        }
-
-        if ($mode === self::MODE_LOGIN_PAGE) {
-            if ($this->isFrontendUserLoggedIn($request)) {
-                return null;
-            }
-
-            $loginPageUid = $this->getLoginPageUid($settings);
-            $currentPageUid = $this->getCurrentPageUid($request);
-
-            if ($loginPageUid > 0 && $loginPageUid !== $currentPageUid) {
-                $returnUrl = $this->buildSafeReturnUrl($request);
-                $loginUrl = $uriBuilder
-                    ->reset()
-                    ->setTargetPageUid($loginPageUid)
-                    ->setCreateAbsoluteUri(true)
-                    ->setArguments([
-                        'return_url' => $returnUrl,
-                        'redirect_url' => $returnUrl,
-                    ])
-                    ->build();
-
-                return new RedirectResponse($loginUrl, 303);
-            }
-
-            return new HtmlResponse(
-                $this->renderNotice(
-                    $this->translate('access.loginRequired'),
-                    $this->translate('access.loginPageMissing')
-                )
+            return new RedirectResponse(
+                $this->buildFrontendLogoutUrl($settings, $request, $uriBuilder, $returnUrl),
+                303
             );
         }
 
-        if ($this->isPplLoginCookieValid($request, $allowFrontendUsers, $allowBackendUsers)) {
+        if ($this->isFrontendUserLoggedIn($request)) {
             return null;
         }
 
-        $localLogoutActive = $this->isLocalLogoutActive($request);
+        $loginPageUid = $this->getLoginPageUid($settings);
+        $currentPageUid = $this->getCurrentPageUid($request);
 
-        if (!$localLogoutActive && $allowBackendUsers && $this->isBackendUserLoggedIn($request)) {
-            return null;
-        }
+        if ($loginPageUid > 0 && $loginPageUid !== $currentPageUid) {
+            $returnUrl = $this->buildSafeReturnUrl($request);
+            $loginUrl = $uriBuilder
+                ->reset()
+                ->setTargetPageUid($loginPageUid)
+                ->setCreateAbsoluteUri(true)
+                ->setArguments([
+                    'return_url' => $returnUrl,
+                    'redirect_url' => $returnUrl,
+                ])
+                ->build();
 
-        if (!$localLogoutActive && $allowFrontendUsers && $this->isFrontendUserLoggedIn($request)) {
-            return null;
-        }
-
-        $parsedBody = $request->getParsedBody();
-        $body = is_array($parsedBody) ? $parsedBody : [];
-        $isPplLoginAttempt = ($body['ppl_deepl_logintype'] ?? '') === 'login';
-
-        if ($isPplLoginAttempt) {
-            $authenticatedUser = $this->authenticateSubmittedLogin($body, $allowFrontendUsers, $allowBackendUsers);
-            if ($authenticatedUser !== null) {
-                $returnUrl = $this->getSubmittedSafeReturnUrl($request) ?? $this->buildSafeReturnUrl($request);
-
-                return (new RedirectResponse($returnUrl, 303))
-                    ->withHeader('Set-Cookie', $this->buildLoginCookieHeader($authenticatedUser, $request));
-            }
-        }
-
-        if (!$allowFrontendUsers && !$allowBackendUsers) {
-            return new HtmlResponse(
-                $this->renderNotice(
-                    $this->translate('access.loginRequired'),
-                    $this->translate('access.noAllowedUserTypes')
-                )
-            );
+            return new RedirectResponse($loginUrl, 303);
         }
 
         return new HtmlResponse(
-            $this->renderInlineLogin($request, $isPplLoginAttempt, trim((string)($body['user'] ?? '')))
+            $this->renderNotice(
+                $this->translate('access.loginRequired'),
+                $this->translate('access.loginPageMissing')
+            )
         );
     }
 
@@ -139,7 +82,7 @@ final class FrontendAccessService
             return '';
         }
 
-        $userLabel = $this->getAuthenticatedUserLabel($request);
+        $userLabel = $this->getAuthenticatedFrontendUserLabel($request);
         if ($userLabel === '') {
             return '';
         }
@@ -176,11 +119,6 @@ final class FrontendAccessService
         return !empty($this->getRequestUserData($request, 'frontend.user')['uid']);
     }
 
-    private function isBackendUserLoggedIn(ServerRequestInterface $request): bool
-    {
-        return !empty($this->getRequestUserData($request, 'backend.user')['uid']);
-    }
-
     private function getRequestUserData(ServerRequestInterface $request, string $attributeName): array
     {
         $user = $request->getAttribute($attributeName);
@@ -188,157 +126,6 @@ final class FrontendAccessService
         $userData = $userProperties['user'] ?? null;
 
         return is_array($userData) ? $userData : [];
-    }
-
-    private function isPplLoginCookieValid(
-        ServerRequestInterface $request,
-        bool $allowFrontendUsers,
-        bool $allowBackendUsers
-    ): bool {
-        $cookie = (string)($request->getCookieParams()[self::COOKIE_NAME] ?? '');
-        $payload = $this->decodeLoginCookie($cookie);
-        if ($payload === null) {
-            return false;
-        }
-
-        $userType = (string)($payload['userType'] ?? '');
-        $userUid = (int)($payload['uid'] ?? 0);
-
-        if ($userType === 'frontend' && $allowFrontendUsers) {
-            return $this->isUserUidActive('fe_users', $userUid);
-        }
-
-        if ($userType === 'backend' && $allowBackendUsers) {
-            return $this->isUserUidActive('be_users', $userUid);
-        }
-
-        return false;
-    }
-
-    private function authenticateSubmittedLogin(array $body, bool $allowFrontendUsers, bool $allowBackendUsers): ?array
-    {
-        $username = trim((string)($body['user'] ?? ''));
-        $password = (string)($body['pass'] ?? '');
-        if ($username === '' || $password === '') {
-            return null;
-        }
-
-        if ($allowFrontendUsers) {
-            $frontendUser = $this->getActiveUserByUsername('fe_users', $username);
-            if ($frontendUser !== null && $this->isPasswordValid($password, (string)$frontendUser['password'], 'FE')) {
-                return ['userType' => 'frontend', 'uid' => (int)$frontendUser['uid']];
-            }
-        }
-
-        if ($allowBackendUsers) {
-            $backendUser = $this->getActiveUserByUsername('be_users', $username);
-            if ($backendUser !== null && $this->isPasswordValid($password, (string)$backendUser['password'], 'BE')) {
-                return ['userType' => 'backend', 'uid' => (int)$backendUser['uid']];
-            }
-        }
-
-        return null;
-    }
-
-    private function getActiveUserByUsername(string $tableName, string $username): ?array
-    {
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($tableName);
-        $now = time();
-        $row = $queryBuilder
-            ->select('uid', 'username', 'password')
-            ->from($tableName)
-            ->where(
-                $queryBuilder->expr()->eq('username', $queryBuilder->createNamedParameter($username)),
-                $queryBuilder->expr()->eq('deleted', $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)),
-                $queryBuilder->expr()->eq('disable', $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)),
-                $queryBuilder->expr()->or(
-                    $queryBuilder->expr()->eq('starttime', $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)),
-                    $queryBuilder->expr()->lte('starttime', $queryBuilder->createNamedParameter($now, \PDO::PARAM_INT))
-                ),
-                $queryBuilder->expr()->or(
-                    $queryBuilder->expr()->eq('endtime', $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)),
-                    $queryBuilder->expr()->gt('endtime', $queryBuilder->createNamedParameter($now, \PDO::PARAM_INT))
-                )
-            )
-            ->setMaxResults(1)
-            ->executeQuery()
-            ->fetchAssociative();
-
-        return is_array($row) ? $row : null;
-    }
-
-    private function getUserLabelByUid(string $tableName, int $uid): string
-    {
-        if ($uid <= 0 || !$this->isUserUidActive($tableName, $uid)) {
-            return '';
-        }
-
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($tableName);
-        $username = $queryBuilder
-            ->select('username')
-            ->from($tableName)
-            ->where($queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($uid, \PDO::PARAM_INT)))
-            ->setMaxResults(1)
-            ->executeQuery()
-            ->fetchOne();
-
-        return is_scalar($username) ? trim((string)$username) : '';
-    }
-
-    private function isUserUidActive(string $tableName, int $uid): bool
-    {
-        if ($uid <= 0) {
-            return false;
-        }
-
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($tableName);
-        $now = time();
-        $count = $queryBuilder
-            ->count('uid')
-            ->from($tableName)
-            ->where(
-                $queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($uid, \PDO::PARAM_INT)),
-                $queryBuilder->expr()->eq('deleted', $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)),
-                $queryBuilder->expr()->eq('disable', $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)),
-                $queryBuilder->expr()->or(
-                    $queryBuilder->expr()->eq('starttime', $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)),
-                    $queryBuilder->expr()->lte('starttime', $queryBuilder->createNamedParameter($now, \PDO::PARAM_INT))
-                ),
-                $queryBuilder->expr()->or(
-                    $queryBuilder->expr()->eq('endtime', $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)),
-                    $queryBuilder->expr()->gt('endtime', $queryBuilder->createNamedParameter($now, \PDO::PARAM_INT))
-                )
-            )
-            ->executeQuery()
-            ->fetchOne();
-
-        return (int)$count > 0;
-    }
-
-    private function isPasswordValid(string $plainPassword, string $passwordHash, string $mode): bool
-    {
-        if ($plainPassword === '' || $passwordHash === '') {
-            return false;
-        }
-
-        try {
-            $hashInstance = GeneralUtility::makeInstance(PasswordHashFactory::class)->get($passwordHash, $mode);
-
-            return $hashInstance->checkPassword($plainPassword, $passwordHash)
-                || password_verify($plainPassword, $passwordHash);
-        } catch (\Throwable) {
-            return password_verify($plainPassword, $passwordHash);
-        }
-    }
-
-    private function getFrontendAccessMode(array $settings): string
-    {
-        $mode = $this->getConfigurationValue($settings, 'frontendAccessMode');
-        if (!in_array($mode, [self::MODE_PPL_LOGIN, self::MODE_LOGIN_PAGE], true)) {
-            return self::MODE_LOGIN_PAGE;
-        }
-
-        return $mode;
     }
 
     private function getLoginPageUid(array $settings): int
@@ -360,6 +147,10 @@ final class FrontendAccessService
 
     private function getConfigurationValue(array $settings, string $name): string
     {
+        if ($name === 'frontendAccessMode') {
+            return self::MODE_LOGIN_PAGE;
+        }
+
         $extensionConfiguration = $GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS'][self::EXTENSION_KEY] ?? [];
         if (in_array($name, self::GLOBAL_FRONTEND_ACCESS_SETTINGS, true)
             && is_array($extensionConfiguration)
@@ -405,7 +196,6 @@ final class FrontendAccessService
         parse_str($uri->getQuery(), $queryParams);
         unset(
             $queryParams['logintype'],
-            $queryParams['ppl_deepl_logintype'],
             $queryParams['ppl_deepl_logout'],
             $queryParams['return_url'],
             $queryParams['redirect_url']
@@ -491,7 +281,6 @@ final class FrontendAccessService
         parse_str($uri->getQuery(), $queryParams);
         unset(
             $queryParams['logintype'],
-            $queryParams['ppl_deepl_logintype'],
             $queryParams['ppl_deepl_logout'],
             $queryParams['return_url'],
             $queryParams['redirect_url']
@@ -544,154 +333,14 @@ final class FrontendAccessService
         return $requestHost !== '' && hash_equals($requestHost, $originHost);
     }
 
-    private function isLocalLogoutActive(ServerRequestInterface $request): bool
+    private function getAuthenticatedFrontendUserLabel(ServerRequestInterface $request): string
     {
-        $payload = $this->decodeLoginCookie((string)($request->getCookieParams()[self::COOKIE_NAME] ?? ''));
-
-        return $payload !== null && (bool)($payload['loggedOut'] ?? false);
-    }
-
-    private function buildLoginCookieHeader(array $authenticatedUser, ServerRequestInterface $request): string
-    {
-        $expires = time() + self::COOKIE_TTL;
-        return $this->buildSignedCookieHeader([
-            'uid' => (int)$authenticatedUser['uid'],
-            'userType' => (string)$authenticatedUser['userType'],
-            'expires' => $expires,
-        ], $expires, $request);
-    }
-
-    private function buildLogoutCookieHeader(ServerRequestInterface $request): string
-    {
-        $expires = time() + self::COOKIE_TTL;
-
-        return $this->buildSignedCookieHeader([
-            'uid' => 0,
-            'userType' => 'logged_out',
-            'loggedOut' => true,
-            'expires' => $expires,
-        ], $expires, $request);
-    }
-
-    private function buildExpiredLoginCookieHeader(ServerRequestInterface $request): string
-    {
-        $cookie = self::COOKIE_NAME . '=deleted; Path=/; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT'
-            . '; HttpOnly; SameSite=Lax';
-
-        if ($request->getUri()->getScheme() === 'https') {
-            $cookie .= '; Secure';
-        }
-
-        return $cookie;
-    }
-
-    private function buildSignedCookieHeader(array $payloadData, int $expires, ServerRequestInterface $request): string
-    {
-        $payload = base64_encode(json_encode($payloadData, JSON_THROW_ON_ERROR));
-        $signature = hash_hmac('sha256', $payload, $this->getSigningSecret());
-        $maxAge = max(0, $expires - time());
-
-        $cookie = self::COOKIE_NAME . '=' . rawurlencode($payload . '.' . $signature)
-            . '; Path=/; Max-Age=' . $maxAge
-            . '; Expires=' . gmdate('D, d M Y H:i:s', $expires) . ' GMT'
-            . '; HttpOnly; SameSite=Lax';
-
-        if ($request->getUri()->getScheme() === 'https') {
-            $cookie .= '; Secure';
-        }
-
-        return $cookie;
-    }
-
-    private function decodeLoginCookie(string $cookie): ?array
-    {
-        if ($cookie === '') {
-            return null;
-        }
-
-        $parts = explode('.', rawurldecode($cookie), 2);
-        if (count($parts) !== 2) {
-            return null;
-        }
-
-        [$payload, $signature] = $parts;
-        $expectedSignature = hash_hmac('sha256', $payload, $this->getSigningSecret());
-        if (!hash_equals($expectedSignature, $signature)) {
-            return null;
-        }
-
-        $decodedPayload = base64_decode($payload, true);
-        $data = is_string($decodedPayload) ? json_decode($decodedPayload, true) : null;
-        if (!is_array($data) || (int)($data['expires'] ?? 0) < time()) {
-            return null;
-        }
-
-        return $data;
-    }
-
-    private function getSigningSecret(): string
-    {
-        $secret = (string)($GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey'] ?? '');
-
-        return $secret !== '' ? $secret : self::EXTENSION_KEY;
-    }
-
-    private function getAuthenticatedUserLabel(ServerRequestInterface $request): string
-    {
-        $cookie = (string)($request->getCookieParams()[self::COOKIE_NAME] ?? '');
-        $payload = $this->decodeLoginCookie($cookie);
-        if ($payload !== null) {
-            $userType = (string)($payload['userType'] ?? '');
-            $userUid = (int)($payload['uid'] ?? 0);
-            if ($userType === 'frontend') {
-                return $this->getUserLabelByUid('fe_users', $userUid);
-            }
-
-            if ($userType === 'backend') {
-                return $this->getUserLabelByUid('be_users', $userUid);
-            }
-        }
-
-        $backendUserData = $this->getRequestUserData($request, 'backend.user');
-        if (!empty($backendUserData['uid'])) {
-            return (string)($backendUserData['username'] ?? $backendUserData['realName'] ?? 'Backend user');
-        }
-
         $frontendUserData = $this->getRequestUserData($request, 'frontend.user');
         if (!empty($frontendUserData['uid'])) {
             return (string)($frontendUserData['username'] ?? $frontendUserData['name'] ?? 'Frontend user');
         }
 
         return '';
-    }
-
-    private function renderInlineLogin(ServerRequestInterface $request, bool $loginAttemptFailed, string $submittedUsername): string
-    {
-        $returnUrl = $this->buildSafeReturnUrl($request);
-
-        return '<div class="ppl-deepl-frontend ppl-deepl-login-shell">'
-            . '<section class="ppl-deepl-card ppl-deepl-login-card">'
-            . '<div class="ppl-deepl-card__head"><strong>' . $this->escape($this->translate('access.loginRequired')) . '</strong></div>'
-            . '<div class="ppl-deepl-card__body">'
-            . '<p class="ppl-deepl-login__intro">' . $this->escape($this->translate('access.loginIntro')) . '</p>'
-            . ($loginAttemptFailed
-                ? '<div class="ppl-deepl-alert">' . $this->escape($this->translate('access.loginFailed')) . '</div>'
-                : '')
-            . '<form class="ppl-deepl-login__form" method="post" action="' . $this->escape($returnUrl) . '" autocomplete="on">'
-            . '<input type="hidden" name="ppl_deepl_logintype" value="login">'
-            . '<input type="hidden" name="return_url" value="' . $this->escape($returnUrl) . '">'
-            . '<input type="hidden" name="redirect_url" value="' . $this->escape($returnUrl) . '">'
-            . '<label class="ppl-deepl-login__field"><span>' . $this->escape($this->translate('access.username')) . '</span>'
-            . '<input class="ppl-deepl-login__input" type="text" name="user" autocomplete="username" required="required" value="' . $this->escape($submittedUsername) . '">'
-            . '</label>'
-            . '<label class="ppl-deepl-login__field"><span>' . $this->escape($this->translate('access.password')) . '</span>'
-            . '<input class="ppl-deepl-login__input" type="password" name="pass" autocomplete="current-password" required="required">'
-            . '</label>'
-            . '<button type="submit" class="ppl-deepl-button ppl-deepl-button--primary ppl-deepl-login__submit">' . $this->escape($this->translate('access.submit')) . '</button>'
-            . '</form>'
-            . '</div>'
-            . '</section>'
-            . '</div>';
     }
 
     private function renderNotice(string $title, string $message): string

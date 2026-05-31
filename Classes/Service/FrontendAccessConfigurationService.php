@@ -11,7 +11,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 final class FrontendAccessConfigurationService
 {
     private const EXTENSION_KEY = 'ppl_deepl_v3_translate';
-    private const MODE_PPL_LOGIN = 'ppl_login';
     private const MODE_LOGIN_PAGE = 'login_page';
 
     public function getConfiguration(): array
@@ -25,12 +24,6 @@ final class FrontendAccessConfigurationService
             'loginPageUid' => $this->normalizeLoginPageUidForDisplay(
                 $this->getStoredValue($extensionConfiguration, 'loginPageUid', '')
             ),
-            'allowFrontendUsers' => $this->normalizeBooleanForDisplay(
-                $this->getStoredValue($extensionConfiguration, 'allowFrontendUsers', '1')
-            ),
-            'allowBackendUsers' => $this->normalizeBooleanForDisplay(
-                $this->getStoredValue($extensionConfiguration, 'allowBackendUsers', '1')
-            ),
             'showLogout' => $this->normalizeBooleanForDisplay(
                 $this->getStoredValue($extensionConfiguration, 'showLogout', '1')
             ),
@@ -38,17 +31,13 @@ final class FrontendAccessConfigurationService
     }
 
     public function saveConfiguration(
-        string $frontendAccessMode,
         string $loginPageUid,
-        string $allowFrontendUsers,
-        string $allowBackendUsers,
         string $showLogout
     ): void {
         $extensionConfiguration = $this->getExtensionConfiguration();
         unset($extensionConfiguration['frontendUserAccessEnabled']);
-        $extensionConfiguration['frontendAccessMode'] = $this->normalizeMode($frontendAccessMode);
-        $extensionConfiguration['allowFrontendUsers'] = $this->normalizeBooleanForStorage($allowFrontendUsers);
-        $extensionConfiguration['allowBackendUsers'] = $this->normalizeBooleanForStorage($allowBackendUsers);
+        unset($extensionConfiguration['allowFrontendUsers'], $extensionConfiguration['allowBackendUsers']);
+        $extensionConfiguration['frontendAccessMode'] = self::MODE_LOGIN_PAGE;
         $extensionConfiguration['showLogout'] = $this->normalizeBooleanForStorage($showLogout);
         $normalizedLoginPageUid = $this->normalizeLoginPageUidForStorage($loginPageUid);
         if ($normalizedLoginPageUid === '') {
@@ -84,9 +73,7 @@ final class FrontendAccessConfigurationService
 
     private function normalizeMode(string $mode): string
     {
-        return in_array($mode, [self::MODE_PPL_LOGIN, self::MODE_LOGIN_PAGE], true)
-            ? $mode
-            : self::MODE_LOGIN_PAGE;
+        return self::MODE_LOGIN_PAGE;
     }
 
     private function normalizeLoginPageUidForDisplay(string $loginPageUid): string

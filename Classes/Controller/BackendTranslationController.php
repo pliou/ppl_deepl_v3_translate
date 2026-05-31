@@ -8,6 +8,7 @@ use Ppl\PplDeeplV3Translate\Service\DeeplGlossaryService;
 use Ppl\PplDeeplV3Translate\Service\DeeplLanguageService;
 use Ppl\PplDeeplV3Translate\Service\DeeplStyleRuleService;
 use Ppl\PplDeeplV3Translate\Service\DeeplTranslationService;
+use Ppl\PplDeeplV3Translate\Service\DocumentUploadValidationService;
 use Ppl\PplDeeplV3Requests\Service\DeeplConfigurationService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -15,6 +16,7 @@ use Psr\Http\Message\UploadedFileInterface;
 use TYPO3\CMS\Backend\Attribute\AsController;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
+use TYPO3\CMS\Core\FormProtection\FormProtectionFactory;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
@@ -22,15 +24,21 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 #[AsController]
 final class BackendTranslationController
 {
+    private const FORM_NAME = 'ppl_deepl_v3_translate';
+    private const FORM_ACTION = 'translation';
+    private const JSON_FLAGS = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_THROW_ON_ERROR;
+
     public function __construct(
         private readonly ModuleTemplateFactory $moduleTemplateFactory,
         private readonly UriBuilder $uriBuilder,
         private readonly PageRenderer $pageRenderer,
+        private readonly FormProtectionFactory $formProtectionFactory,
         private readonly DeeplConfigurationService $configurationService,
         private readonly DeeplLanguageService $languageService,
         private readonly DeeplGlossaryService $glossaryService,
         private readonly DeeplStyleRuleService $styleRuleService,
-        private readonly DeeplTranslationService $translationService
+        private readonly DeeplTranslationService $translationService,
+        private readonly DocumentUploadValidationService $uploadValidationService
     ) {}
 
     public function handleRequest(ServerRequestInterface $request): ResponseInterface
@@ -39,11 +47,22 @@ final class BackendTranslationController
         $activeTab = $this->getActiveTab($request, $body);
         $authKey = $this->configurationService->getAuthKey();
         $messages = [];
+        $formProtection = $this->formProtectionFactory->createFromRequest($request);
+        $formToken = $formProtection->generateToken(self::FORM_NAME, self::FORM_ACTION);
 
         $textData = $this->getDefaultTextData();
         $fileData = $this->getDefaultFileData();
 
         $action = (string)($body['module_action'] ?? '');
+        if ($action !== ''
+            && !$formProtection->validateToken((string)($body['form_token'] ?? ''), self::FORM_NAME, self::FORM_ACTION)
+        ) {
+            $action = '';
+            $messages[] = [
+                'type' => 'error',
+                'text' => $this->translate('message.invalidFormToken'),
+            ];
+        }
 
         if ($action === 'translate_text') {
             $activeTab = 'translation';
@@ -88,10 +107,11 @@ final class BackendTranslationController
             'activeTab' => $activeTab,
             'apiCapabilities' => $this->translationService->getApiCapabilities(),
             'authKeyConfigured' => $authKey !== '',
-            'backendControlDataJson' => json_encode($backendControlData, JSON_THROW_ON_ERROR),
+            'backendControlDataJson' => $this->encodeJson($backendControlData),
             'fileData' => $fileData,
-            'glossaryCombinationsJson' => json_encode((object)$glossaryCombinations, JSON_THROW_ON_ERROR),
-            'glossaryOptionsByCombinationJson' => json_encode((object)$glossaryOptionsByCombination, JSON_THROW_ON_ERROR),
+            'formToken' => $formToken,
+            'glossaryCombinationsJson' => $this->encodeJson((object)$glossaryCombinations),
+            'glossaryOptionsByCombinationJson' => $this->encodeJson((object)$glossaryOptionsByCombination),
             'languages' => $this->languageService->getLanguages(),
             'sourceLanguages' => $this->languageService->getSourceLanguages(),
             'targetLanguages' => $this->languageService->getTargetLanguages(),
@@ -99,8 +119,8 @@ final class BackendTranslationController
             'routeFile' => $this->buildRouteUrl('ppl_deepl_v3_file_translation'),
             'routeTranslation' => $this->buildRouteUrl('ppl_deepl_v3_translation'),
             'styleRuleOptions' => $this->styleRuleService->getStyleRuleOptions(),
-            'styleRuleOptionsJson' => json_encode((object)$styleRuleDisplayOptions, JSON_THROW_ON_ERROR),
-            'styleRuleOptionsByLanguageJson' => json_encode((object)$styleRuleOptionsByLanguage, JSON_THROW_ON_ERROR),
+            'styleRuleOptionsJson' => $this->encodeJson((object)$styleRuleDisplayOptions),
+            'styleRuleOptionsByLanguageJson' => $this->encodeJson((object)$styleRuleOptionsByLanguage),
             'textData' => $textData,
         ]);
 
@@ -177,17 +197,16 @@ final class BackendTranslationController
         }
 
         $originalName = (string)$uploadedFile->getClientFilename();
-        $originalExtension = strtolower((string)pathinfo($originalName, PATHINFO_EXTENSION));
-        $allowedExtensions = ['txt', 'pdf', 'docx', 'pptx'];
 
-        if (!in_array($originalExtension, $allowedExtensions, true)) {
-            $data['errorMessage'] = $this->translate('error.invalidFileType');
+        $metadataError = $this->uploadValidationService->validateMetadata($originalName, $uploadedFile->getSize());
+        if ($metadataError !== null) {
+            $data['errorMessage'] = $this->translate($metadataError);
         } elseif ($authKey === '') {
             $data['errorMessage'] = $this->translate('error.missingAuthKey.v3');
         } elseif ($this->isSameLanguagePair($data['language_source'], $data['language_ziel'])) {
             $data['errorMessage'] = $this->translate('error.sameLanguage');
         } else {
-            $safeOriginalName = preg_replace('/[^a-zA-Z0-9_.-]/', '_', $originalName);
+            $safeOriginalName = $this->uploadValidationService->sanitizeOriginalFileName($originalName);
             $fileName = 'translated_' . date('Ymd-His') . '_' . $safeOriginalName;
             $targetDir = 'fileadmin/user_upload/translated/';
             $absoluteTargetDir = GeneralUtility::getFileAbsFileName($targetDir);
@@ -201,6 +220,12 @@ final class BackendTranslationController
 
             try {
                 $uploadedFile->moveTo($sourcePath);
+                $fileError = $this->uploadValidationService->validateFile($sourcePath, $originalName, filesize($sourcePath) ?: $uploadedFile->getSize());
+                if ($fileError !== null) {
+                    $data['errorMessage'] = $this->translate($fileError);
+                    return $this->withSameLanguageState($this->withGlossaryAvailability($data, false));
+                }
+
                 $this->translationService->translateDocument(
                     $authKey,
                     $sourcePath,
@@ -311,17 +336,6 @@ final class BackendTranslationController
         return $this->languageService->normalizeGlossaryLanguage($sourceLanguage) === $this->languageService->normalizeGlossaryLanguage($targetLanguage);
     }
 
-    private function markSelectedItems(array $items, array $selectedIds): array
-    {
-        $selectedLookup = array_fill_keys(array_map('strval', $selectedIds), true);
-
-        foreach ($items as $index => $item) {
-            $items[$index]['selected'] = isset($selectedLookup[(string)($item['id'] ?? '')]);
-        }
-
-        return $items;
-    }
-
     private function getActiveTab(ServerRequestInterface $request, array $body): string
     {
         if (in_array(($body['active_tab'] ?? ''), ['file', 'translation'], true)) {
@@ -350,5 +364,10 @@ final class BackendTranslationController
     private function translate(string $key, array $arguments = []): string
     {
         return LocalizationUtility::translate($key, 'PplDeeplV3Translate', $arguments) ?? $key;
+    }
+
+    private function encodeJson(mixed $data): string
+    {
+        return (string)json_encode($data, self::JSON_FLAGS);
     }
 }

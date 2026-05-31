@@ -14,16 +14,21 @@ use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Backend\Attribute\AsController;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
+use TYPO3\CMS\Core\FormProtection\FormProtectionFactory;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 #[AsController]
 final class BackendConfigurationController
 {
+    private const FORM_NAME = 'ppl_deepl_v3_translate';
+    private const FORM_ACTION = 'configuration';
+
     public function __construct(
         private readonly ModuleTemplateFactory $moduleTemplateFactory,
         private readonly UriBuilder $uriBuilder,
         private readonly PageRenderer $pageRenderer,
+        private readonly FormProtectionFactory $formProtectionFactory,
         private readonly DeeplConfigurationService $configurationService,
         private readonly DeeplGlossaryService $glossaryService,
         private readonly LanguageConfigurationService $languageConfigurationService,
@@ -42,15 +47,24 @@ final class BackendConfigurationController
         $languages = $this->languageConfigurationService->getSavedLanguages();
         $styleRules = $this->styleRuleService->getSavedStyleRules();
         $action = (string)($body['module_action'] ?? '');
+        $formProtection = $this->formProtectionFactory->createFromRequest($request);
+        $formToken = $formProtection->generateToken(self::FORM_NAME, self::FORM_ACTION);
+
+        if ($action !== ''
+            && !$formProtection->validateToken((string)($body['form_token'] ?? ''), self::FORM_NAME, self::FORM_ACTION)
+        ) {
+            $action = '';
+            $messages[] = [
+                'type' => 'error',
+                'text' => $this->translate('message.invalidFormToken'),
+            ];
+        }
 
         if ($action === 'save_frontend_access') {
             $activeConfigTab = 'frontend_access';
             try {
                 $this->frontendAccessConfigurationService->saveConfiguration(
-                    (string)($body['frontend_access_mode'] ?? ''),
                     (string)($body['login_page_uid'] ?? ''),
-                    (string)($body['allow_frontend_users'] ?? '0'),
-                    (string)($body['allow_backend_users'] ?? '0'),
                     (string)($body['show_logout'] ?? '0')
                 );
                 $messages[] = [
@@ -213,6 +227,7 @@ final class BackendConfigurationController
             'disabledLanguages' => $languageGroups['disabled'],
             'enabledLanguages' => $languageGroups['enabled'],
             'frontendAccessConfiguration' => $this->frontendAccessConfigurationService->getConfiguration(),
+            'formToken' => $formToken,
             'glossaries' => $glossaries,
             'languages' => $languages,
             'messages' => $messages,
