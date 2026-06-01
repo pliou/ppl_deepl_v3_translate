@@ -14,11 +14,24 @@ final class DocumentUploadValidationService
     /**
      * @return string|null Translation key for the validation error.
      */
-    public function validateMetadata(string $originalName, ?int $fileSize): ?string
+    public function validateOriginalName(string $originalName): ?string
     {
         $extension = $this->getExtension($originalName);
         if (!in_array($extension, self::ALLOWED_EXTENSIONS, true)) {
             return 'error.invalidFileType';
+        }
+
+        return null;
+    }
+
+    /**
+     * @return string|null Translation key for the validation error.
+     */
+    public function validateMetadata(string $originalName, ?int $fileSize): ?string
+    {
+        $metadataError = $this->validateOriginalName($originalName);
+        if ($metadataError !== null) {
+            return $metadataError;
         }
 
         if ($fileSize === null || $fileSize <= 0) {

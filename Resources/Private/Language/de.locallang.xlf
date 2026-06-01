@@ -138,11 +138,6 @@
             <trans-unit id="message.styleRulesFetchFailed"><source>Style rules could not be fetched: %s</source><target>Stilregeln konnten nicht abgefragt werden: %s</target></trans-unit>
             <trans-unit id="message.styleRulesApproved"><source>%d style rule(s) approved.</source><target>%d Stilregel(n) freigegeben.</target></trans-unit>
             <trans-unit id="error.missingFile"><source>Please choose a file.</source><target>Bitte wählen Sie eine Datei aus.</target></trans-unit>
-            
-            <trans-unit id="constants.apiBaseUrl">
-                <source>DeepL V3 API base URL</source>
-                <target>DeepL V3 API-Basis-URL</target>
-            </trans-unit>
             <trans-unit id="constants.glossaryPid">
                 <source>Glossary terms page ID</source>
                 <target>Seiten-ID der Glossarbegriffe</target>
