@@ -10,17 +10,18 @@
 - Moves executable frontend inline JavaScript into `Resources/Public/Javascript/frontend-controls.js`; Fluid templates keep JSON data containers only.
 - Documents the remaining public-download risk under `fileadmin/user_upload/translated/`.
 - Updates release documentation to reference HDA DeepL V2 Translate as `hda-ppl/hda-deepl-v2-translate` and documents that V3 builds on the HDA V2 product and workflow foundation without depending on historical V2 package names.
-- Notes TYPO3 v12 EOL / ELTS status with the official TYPO3 documentation link: https://docs.typo3.org/m/typo3/tutorial-getting-started/12.4/en-us/Installation/SystemRequirements/Index.html.
+- Removes TYPO3 13 scanner findings for direct upload-size calls, legacy Page TSconfig registration and deprecated plugin-type constants while keeping the existing frontend plugin signatures stable.
+- Updates release documentation for TYPO3 v13 LTS with the official TYPO3 documentation link: https://docs.typo3.org/m/typo3/tutorial-getting-started/13.4/en-us/Installation/SystemRequirements/Index.html.
 
-## 12.4.1
+## 13.4.1
 
 - Delegated V3 language, glossary, style-rule and custom-instruction configuration to `ppl_deepl_v3_requests`.
 - Kept the existing Translate controllers and templates as product UI consumers of the shared request configuration.
 - Added migration-compatible shared storage documentation.
 
-## 12.4.0
+## 13.4.0
 
-- Release for TYPO3 12.4 LTS.
+- Release for TYPO3 13.4 LTS.
 - Adds frontend text and file translation content elements.
 - Adds backend text translation, file translation and configuration modules.
 - Adds approved DeepL V3 language, glossary and style rule handling.

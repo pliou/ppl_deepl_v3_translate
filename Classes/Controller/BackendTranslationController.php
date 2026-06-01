@@ -198,7 +198,7 @@ final class BackendTranslationController
 
         $originalName = (string)$uploadedFile->getClientFilename();
 
-        $metadataError = $this->uploadValidationService->validateMetadata($originalName, $uploadedFile->getSize());
+        $metadataError = $this->uploadValidationService->validateOriginalName($originalName);
         if ($metadataError !== null) {
             $data['errorMessage'] = $this->translate($metadataError);
         } elseif ($authKey === '') {
@@ -220,7 +220,12 @@ final class BackendTranslationController
 
             try {
                 $uploadedFile->moveTo($sourcePath);
-                $fileError = $this->uploadValidationService->validateFile($sourcePath, $originalName, filesize($sourcePath) ?: $uploadedFile->getSize());
+                $sourceSize = filesize($sourcePath);
+                $fileError = $this->uploadValidationService->validateFile(
+                    $sourcePath,
+                    $originalName,
+                    $sourceSize === false ? null : $sourceSize
+                );
                 if ($fileError !== null) {
                     $data['errorMessage'] = $this->translate($fileError);
                     return $this->withSameLanguageState($this->withGlossaryAvailability($data, false));

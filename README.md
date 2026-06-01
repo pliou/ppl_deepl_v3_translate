@@ -1,6 +1,6 @@
 # PPL DeepL V3 Translate
 
-TYPO3 12.4 extension for DeepL V3 text and file translation in frontend content elements and backend modules.
+TYPO3 13.4 extension for DeepL V3 text and file translation in frontend content elements and backend modules.
 
 The extension provides the product UI, TYPO3 controllers, templates and frontend access handling. DeepL HTTP communication and shared V3 approval storage are delegated to `ppl/ppl-deepl-v3-requests`.
 
@@ -64,9 +64,9 @@ Historical V2 package names are intentionally not used in this release documenta
 
 ## Requirements
 
-- TYPO3 CMS 12.4 LTS
+- TYPO3 CMS 13.4 LTS
 - PHP 8.2 or newer
-- `ppl/ppl-deepl-v3-requests` 12.4
+- `ppl/ppl-deepl-v3-requests` 13.4
 - A DeepL API key with access to the used V3 features
 
 ## Installation
@@ -74,7 +74,7 @@ Historical V2 package names are intentionally not used in this release documenta
 Install the request package and the translate package:
 
 ```bash
-composer require ppl/ppl-deepl-v3-requests:^12.4 ppl/ppl-deepl-v3-translate:^12.4
+composer require ppl/ppl-deepl-v3-requests:^13.4 ppl/ppl-deepl-v3-translate:^13.4
 ```
 
 Run the TYPO3 extension setup if your deployment does not do it automatically:
@@ -182,7 +182,7 @@ Existing files from `var/ppl_deepl_v3_translate/` are migrated by the request se
 
 ## Release Line
 
-Version `12.4.x` is the TYPO3 12.4 release line. TYPO3 documents that v12 reached end-of-life on April 30, 2026 and requires TYPO3 ELTS for continued maintenance; see the official [TYPO3 v12 system requirements / EOL notice](https://docs.typo3.org/m/typo3/tutorial-getting-started/12.4/en-us/Installation/SystemRequirements/Index.html).
+Version `13.4.x` is the TYPO3 13.4 LTS release line; see the official [TYPO3 v13 system requirements](https://docs.typo3.org/m/typo3/tutorial-getting-started/13.4/en-us/Installation/SystemRequirements/Index.html).
 
 ## License
 
