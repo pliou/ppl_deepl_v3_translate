@@ -1,10 +1,10 @@
 plugin.tx_ppldeeplv3translate.settings.apiBaseUrl = https://api.deepl.com
 plugin.tx_ppldeeplv3translate {
     settings {
-        # cat=plugin.tx_ppldeeplv3translate//; type=string; label= DeepL V3 API Base URL
+        # cat=plugin.tx_ppldeeplv3translate//; type=string; label=LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:constants.apiBaseUrl
         apiBaseUrl = https://api.deepl.com
 
-        # cat=plugin.tx_ppldeeplv3translate//; type=integer; label= Seite mit den Glossarbegriffen
+        # cat=plugin.tx_ppldeeplv3translate//; type=integer; label=LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:constants.glossaryPid
         glossaryPid =
     }
 }

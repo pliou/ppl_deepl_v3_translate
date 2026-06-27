@@ -1,4 +1,5 @@
 page.includeCSS.pplDeeplSite = EXT:ppl_deepl_v3_translate/Resources/Public/Css/site.css
+page.includeJSFooter.pplDeeplFrontendControls = EXT:ppl_deepl_v3_translate/Resources/Public/Javascript/frontend-controls.js
 page.includeJSFooter.pplDeeplFrontendCopy = EXT:ppl_deepl_v3_translate/Resources/Public/Javascript/frontend-copy.js
 
 plugin.tx_ppldeeplv3translate_deepl {
@@ -23,13 +24,6 @@ plugin.tx_ppldeeplv3translate_deepl {
 }
 plugin.tx_ppldeeplv3translate_deeplfile {
     settings < plugin.tx_ppldeeplv3translate.settings
-}
-
-tt_content.ppldeeplv3translate_deepl =< lib.contentElement
-tt_content.ppldeeplv3translate_deepl {
-    templateName = Interface
-    pluginName = Deepl
-    extensionName = PplDeeplV3Translate
 }
 
 tt_content.list.20.ppldeeplv3translate_deepl = USER_INT

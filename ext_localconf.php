@@ -2,28 +2,26 @@
 
 defined('TYPO3') or die();
 
+$classicPluginType = 'list_type';
+
 \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
     'PplDeeplV3Translate',
     'Deepl',
     [\Ppl\PplDeeplV3Translate\Controller\DeeplController::class => 'interface'],
     [\Ppl\PplDeeplV3Translate\Controller\DeeplController::class => 'interface'],
-    \TYPO3\CMS\Extbase\Utility\ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT
+    $classicPluginType
 );
 
 \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
     'PplDeeplV3Translate',
     'Deeplfile',
-    [\Ppl\PplDeeplV3Translate\Controller\DeeplFileController::class => 'index'],
-    [\Ppl\PplDeeplV3Translate\Controller\DeeplFileController::class => 'index'],
-    \TYPO3\CMS\Extbase\Utility\ExtensionUtility::PLUGIN_TYPE_PLUGIN
+    [\Ppl\PplDeeplV3Translate\Controller\DeeplFileController::class => 'index,download'],
+    [\Ppl\PplDeeplV3Translate\Controller\DeeplFileController::class => 'index,download'],
+    $classicPluginType
 );
 
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTypoScriptSetup(
     "@import 'EXT:ppl_deepl_v3_translate/Configuration/TypoScript/setup.typoscript'"
-);
-
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig(
-    "@import 'EXT:ppl_deepl_v3_translate/Configuration/TsConfig/Page/ContentElementWizard.tsconfig'"
 );
 
 $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['extbase']['extensions']['PplDeeplV3Translate']['plugins']['Deepl']['nonCacheableActions'] = [
@@ -32,11 +30,11 @@ $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['extbase']['extensions']['PplDeeplV3Trans
 
 $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['extbase']['extensions']['PplDeeplV3Translate']['plugins']['Deeplfile']['nonCacheableActions'] = [
     'index' => 'index',
+    'download' => 'download',
 ];
 
 foreach ([
     'ppl_deepl_logout',
-    'ppl_deepl_logintype',
     'return_url',
     'redirect_url',
     'logintype',

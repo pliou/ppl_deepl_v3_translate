@@ -3,6 +3,7 @@
 namespace Ppl\PplDeeplV3Translate\Controller;
 
 use Ppl\PplDeeplV3Requests\Service\DeeplApiClientService;
+use Ppl\PplDeeplV3Requests\Service\DeeplCustomInstructionConfigurationService;
 use Ppl\PplDeeplV3Requests\Service\DeeplConfigurationService;
 use Ppl\PplDeeplV3Translate\Service\DeeplGlossaryService;
 use Ppl\PplDeeplV3Translate\Service\DeeplLanguageService;
@@ -10,6 +11,7 @@ use Ppl\PplDeeplV3Translate\Service\DeeplStyleRuleService;
 use Ppl\PplDeeplV3Translate\Service\DeeplTranslationService;
 use Ppl\PplDeeplV3Translate\Service\Api\V3RequestAdapter;
 use Ppl\PplDeeplV3Translate\Service\FrontendAccessService;
+use Ppl\PplDeeplV3Translate\Service\TranslationRateLimiter;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
@@ -17,6 +19,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class DeeplController extends ActionController
 {
+    private const JSON_FLAGS = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_THROW_ON_ERROR;
+
     public function interfaceAction(): ResponseInterface
     {
         $frontendAccessService = GeneralUtility::makeInstance(FrontendAccessService::class);
@@ -30,7 +34,14 @@ class DeeplController extends ActionController
         $apiAdapter = GeneralUtility::makeInstance(V3RequestAdapter::class, $languageService, $apiClient);
         $glossaryService = GeneralUtility::makeInstance(DeeplGlossaryService::class, $languageService, $apiAdapter);
         $styleRuleService = GeneralUtility::makeInstance(DeeplStyleRuleService::class, $languageService, $apiClient);
-        $translationService = GeneralUtility::makeInstance(DeeplTranslationService::class, $languageService, $glossaryService, $apiAdapter, $styleRuleService);
+        $translationService = GeneralUtility::makeInstance(
+            DeeplTranslationService::class,
+            $languageService,
+            $glossaryService,
+            $apiAdapter,
+            $styleRuleService,
+            GeneralUtility::makeInstance(DeeplCustomInstructionConfigurationService::class)
+        );
         $configurationService = GeneralUtility::makeInstance(DeeplConfigurationService::class);
 
         $authKey = $configurationService->getAuthKey();
@@ -72,7 +83,10 @@ class DeeplController extends ActionController
         }
         $useGlossary = false;
 
-        if ($this->request->hasArgument('textarea')) {
+        // Defense in depth: only a real POST submit may trigger the (paid) DeepL call. The form already
+        // posts with an Extbase request token; this additionally rejects a crafted GET that merely carries
+        // a "textarea" argument, so it cannot burn API quota.
+        if ($this->request->getMethod() === 'POST' && $this->request->hasArgument('textarea')) {
             $inputText = trim((string)$this->request->getArgument('textarea'));
 
             $selectedGlossaryId = $this->request->hasArgument('glossary_id')
@@ -100,6 +114,8 @@ class DeeplController extends ActionController
                 $translationError = $this->translate('error.sameLanguage');
             } elseif ($authKey === '') {
                 $translationError = $this->translate('error.missingAuthKey.v3');
+            } elseif (!GeneralUtility::makeInstance(TranslationRateLimiter::class)->allow($this->request)) {
+                $translationError = $this->translate('error.rateLimited');
             } else {
                 try {
                     $translatedText = $translationService->translateText(
@@ -149,7 +165,7 @@ class DeeplController extends ActionController
         $this->view->assignMultiple([
             'apiCapabilities' => $translationService->getApiCapabilities(),
             'frontendAccessHeader' => $frontendAccessService->renderAccessHeader($this->request),
-            'frontendControlDataJson' => json_encode($frontendControlData, JSON_THROW_ON_ERROR),
+            'frontendControlDataJson' => $this->encodeJson($frontendControlData),
             'custom_instructions' => $customInstructions,
             'textarea' => $inputText,
             'translatedText' => $translatedText,
@@ -165,16 +181,16 @@ class DeeplController extends ActionController
             'targetLanguageLabel' => $targetLanguages[$selectedTargetLanguage] ?? $languages[$selectedTargetLanguage] ?? 'English (UK)',
             'targetLanguageCode' => $selectedTargetLanguage,
             'styleRuleOptions' => $styleRuleOptions,
-            'styleRuleOptionsJson' => json_encode((object)$styleRuleService->getStyleRuleDisplayOptions(), JSON_THROW_ON_ERROR),
-            'styleRuleOptionsByLanguageJson' => json_encode((object)$styleRuleService->getStyleRuleOptionsByLanguage(), JSON_THROW_ON_ERROR),
+            'styleRuleOptionsJson' => $this->encodeJson((object)$styleRuleService->getStyleRuleDisplayOptions()),
+            'styleRuleOptionsByLanguageJson' => $this->encodeJson((object)$styleRuleService->getStyleRuleOptionsByLanguage()),
             'style_rule_id' => $selectedStyleRuleId,
             'selectionMode' => $selectionMode,
             'selectionLabel' => $selectionLabel,
             'sameLanguageSelected' => $this->isSameLanguagePair($languageService, $selectedSourceLanguage, $selectedTargetLanguage),
             'glossaryAvailable' => $glossaryService->hasGlossaryForLanguagePair($selectedSourceLanguage, $selectedTargetLanguage),
-            'glossaryCombinationsJson' => json_encode((object)$glossaryService->getGlossaryCombinations(), JSON_THROW_ON_ERROR),
+            'glossaryCombinationsJson' => $this->encodeJson((object)$glossaryService->getGlossaryCombinations()),
             'glossaryOptions' => $glossaryOptions,
-            'glossaryOptionsByCombinationJson' => json_encode((object)$glossaryOptionsByCombination, JSON_THROW_ON_ERROR),
+            'glossaryOptionsByCombinationJson' => $this->encodeJson((object)$glossaryOptionsByCombination),
             'glossary_id' => $selectedGlossaryId,
         ]);
 
@@ -194,5 +210,10 @@ class DeeplController extends ActionController
     private function isSameLanguagePair(DeeplLanguageService $languageService, string $sourceLanguage, string $targetLanguage): bool
     {
         return $languageService->normalizeGlossaryLanguage($sourceLanguage) === $languageService->normalizeGlossaryLanguage($targetLanguage);
+    }
+
+    private function encodeJson(mixed $data): string
+    {
+        return (string)json_encode($data, self::JSON_FLAGS);
     }
 }
