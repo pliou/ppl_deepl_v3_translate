@@ -140,8 +140,6 @@
             <trans-unit id="message.styleRulesFetchFailed"><source>Style rules could not be fetched: %s</source></trans-unit>
             <trans-unit id="message.styleRulesApproved"><source>%d style rule(s) approved.</source></trans-unit>
             <trans-unit id="error.missingFile"><source>Please choose a file.</source></trans-unit>
-            
-            <trans-unit id="constants.apiBaseUrl"><source>DeepL V3 API base URL</source></trans-unit>
             <trans-unit id="constants.glossaryPid"><source>Glossary terms page ID</source></trans-unit>
         </body>
     </file>

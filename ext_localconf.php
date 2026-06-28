@@ -2,14 +2,12 @@
 
 defined('TYPO3') or die();
 
-$classicPluginType = 'list_type';
-
 \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
     'PplDeeplV3Translate',
     'Deepl',
     [\Ppl\PplDeeplV3Translate\Controller\DeeplController::class => 'interface'],
     [\Ppl\PplDeeplV3Translate\Controller\DeeplController::class => 'interface'],
-    $classicPluginType
+    \TYPO3\CMS\Extbase\Utility\ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT
 );
 
 \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
@@ -17,7 +15,7 @@ $classicPluginType = 'list_type';
     'Deeplfile',
     [\Ppl\PplDeeplV3Translate\Controller\DeeplFileController::class => 'index,download'],
     [\Ppl\PplDeeplV3Translate\Controller\DeeplFileController::class => 'index,download'],
-    $classicPluginType
+    \TYPO3\CMS\Extbase\Utility\ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT
 );
 
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTypoScriptSetup(

@@ -543,14 +543,9 @@
                 <source>Please choose a file.</source>
                 <target>Por favor elija un archivo.</target>
             </trans-unit>
-            
-            <trans-unit id="constants.apiBaseUrl">
-                <source>DeepL V3 API base URL</source>
-                <target>URL base de la API DeepL V3</target>
-            </trans-unit>
             <trans-unit id="constants.glossaryPid">
                 <source>Glossary terms page ID</source>
-                <target>ID de la página de términos del glosario</target>
+                <target>ID de la p?gina de t?rminos del glosario</target>
             </trans-unit>
         </body>
     </file>

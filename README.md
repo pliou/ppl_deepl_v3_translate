@@ -1,6 +1,6 @@
 # PPL DeepL V3 Translate
 
-TYPO3 13.4 extension for DeepL V3 text and file translation in frontend content elements and backend modules.
+TYPO3 14 extension for DeepL V3 text and file translation in frontend content elements and backend modules.
 
 The extension provides the product UI, TYPO3 controllers, templates and frontend access handling. DeepL HTTP communication and shared V3 approval storage are delegated to `ppl/ppl-deepl-v3-requests`.
 
@@ -64,9 +64,9 @@ Historical V2 package names are intentionally not used in this release documenta
 
 ## Requirements
 
-- TYPO3 CMS 13.4 LTS
+- TYPO3 CMS 14
 - PHP 8.2 or newer
-- `ppl/ppl-deepl-v3-requests` 13.4
+- `ppl/ppl-deepl-v3-requests` 14
 - A DeepL API key with access to the used V3 features
 
 ## Installation
@@ -74,7 +74,7 @@ Historical V2 package names are intentionally not used in this release documenta
 Install the request package and the translate package:
 
 ```bash
-composer require ppl/ppl-deepl-v3-requests:^13.4 ppl/ppl-deepl-v3-translate:^13.4
+composer require ppl/ppl-deepl-v3-requests:^14.0 ppl/ppl-deepl-v3-translate:^14.0
 ```
 
 Run the TYPO3 extension setup if your deployment does not do it automatically:
@@ -96,12 +96,11 @@ TYPO3 extension configuration:
 'EXTENSIONS' => [
     'ppl_deepl_v3_requests' => [
         'authKey' => 'your-deepl-auth-key',
-        'apiBaseUrl' => 'https://api.deepl.com',
     ],
 ],
 ```
 
-Use `https://api.deepl.com` for DeepL API Pro and `https://api-free.deepl.com` for DeepL API Free.
+Optional endpoint host settings also belong to the request package.
 
 Do not commit API keys to the repository. This package ships no API key and no TypoScript auth-key fallback.
 
@@ -184,7 +183,7 @@ Existing files from `var/ppl_deepl_v3_translate/` are migrated by the request se
 
 ## Release Line
 
-Version `13.4.x` is the TYPO3 13.4 LTS release line; see the official [TYPO3 v13 system requirements](https://docs.typo3.org/m/typo3/tutorial-getting-started/13.4/en-us/Installation/SystemRequirements/Index.html).
+Version `14.x` is the TYPO3 14 release line; see the official [TYPO3 system requirements](https://docs.typo3.org/m/typo3/tutorial-getting-started/main/en-us/Installation/SystemRequirements/Index.html).
 
 ## License
 
