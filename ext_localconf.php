@@ -15,8 +15,8 @@ $classicPluginType = 'list_type';
 \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
     'PplDeeplV3Translate',
     'Deeplfile',
-    [\Ppl\PplDeeplV3Translate\Controller\DeeplFileController::class => 'index'],
-    [\Ppl\PplDeeplV3Translate\Controller\DeeplFileController::class => 'index'],
+    [\Ppl\PplDeeplV3Translate\Controller\DeeplFileController::class => 'index,download'],
+    [\Ppl\PplDeeplV3Translate\Controller\DeeplFileController::class => 'index,download'],
     $classicPluginType
 );
 
@@ -30,6 +30,7 @@ $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['extbase']['extensions']['PplDeeplV3Trans
 
 $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['extbase']['extensions']['PplDeeplV3Translate']['plugins']['Deeplfile']['nonCacheableActions'] = [
     'index' => 'index',
+    'download' => 'download',
 ];
 
 foreach ([

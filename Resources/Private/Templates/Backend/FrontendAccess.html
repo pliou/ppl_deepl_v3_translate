@@ -1,0 +1,65 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+    <div class="ppl-deepl-v3">
+        <div class="ppl-deepl-v3__head">
+            <h1><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:config.frontendAccess" /></h1>
+            <p><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:backend.frontendLoginApplies" /></p>
+        </div>
+
+        <f:for each="{messages}" as="message">
+            <div class="ppl-deepl-v3__{message.type}">{message.text}</div>
+        </f:for>
+
+        <div id="config-access" class="ppl-deepl-v3__card" data-scroll-anchor="config-access">
+            <div class="ppl-deepl-v3__card-head">
+                <strong><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:backend.loginBehavior" /></strong>
+                <span class="ppl-deepl-v3__muted"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:backend.frontendLoginApplies" /></span>
+            </div>
+            <div class="ppl-deepl-v3__card-body">
+                <form method="post" action="{routeFrontendAccess}">
+                    <input type="hidden" name="module_action" value="save_frontend_access">
+                    <input type="hidden" name="form_token" value="{formToken}">
+
+                    <div class="ppl-deepl-v3__settings-grid ppl-deepl-v3__section">
+                        <div class="ppl-deepl-v3__option">
+                            <span>
+                                <strong><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:backend.useLoginByPageId" /></strong>
+                                <br>
+                                <span class="ppl-deepl-v3__muted"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:backend.loginPageDescription" /></span>
+                                <br>
+                                <span class="ppl-deepl-v3__muted"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:backend.loginPageRedirectHint" /></span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="ppl-deepl-v3__section">
+                        <strong><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:backend.logoutDisplay" /></strong>
+                        <div class="ppl-deepl-v3__settings-grid ppl-deepl-v3__section">
+                            <label class="ppl-deepl-v3__option">
+                                <input type="hidden" name="show_logout" value="0">
+                                <f:if condition="{frontendAccessConfiguration.showLogout}">
+                                    <f:then><input type="checkbox" name="show_logout" value="1" checked="checked"></f:then>
+                                    <f:else><input type="checkbox" name="show_logout" value="1"></f:else>
+                                </f:if>
+                                <span>
+                                    <strong><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:backend.showLogout" /></strong>
+                                    <br>
+                                    <span class="ppl-deepl-v3__muted"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:backend.showLogoutDescription" /></span>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="ppl-deepl-v3__field ppl-deepl-v3__section">
+                        <label for="ppl_deepl_v3_login_page_uid"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:backend.loginPageId" /></label>
+                        <input id="ppl_deepl_v3_login_page_uid" type="number" min="0" step="1" name="login_page_uid" value="{frontendAccessConfiguration.loginPageUid}">
+                        <span class="ppl-deepl-v3__muted"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:backend.loginPageHint" /></span>
+                    </div>
+
+                    <div class="ppl-deepl-v3__actions ppl-deepl-v3__section">
+                        <button class="btn btn-primary" type="submit" data-scroll-anchor="config-access"><f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:backend.saveFrontendLoginBehavior" /></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</html>

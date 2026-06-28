@@ -546,11 +546,11 @@
             
             <trans-unit id="constants.apiBaseUrl">
                 <source>DeepL V3 API base URL</source>
-                <target>??????? URL API DeepL V3</target>
+                <target>Базовый URL API DeepL V3</target>
             </trans-unit>
             <trans-unit id="constants.glossaryPid">
                 <source>Glossary terms page ID</source>
-                <target>ID ???????? ???????? ?????????</target>
+                <target>ID страницы терминов глоссария</target>
             </trans-unit>
         </body>
     </file>

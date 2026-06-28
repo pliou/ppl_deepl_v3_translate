@@ -228,13 +228,33 @@ final class FrontendAccessService
             return false;
         }
 
-        if (preg_match('/[\x00-\x1F\x7F]/', $returnUrl)) {
+        if ($this->containsUnsafeReturnUrlCharacters($returnUrl)) {
+            return false;
+        }
+
+        $decodedReturnUrl = rawurldecode($returnUrl);
+        if ($this->containsUnsafeReturnUrlCharacters($decodedReturnUrl)
+            || str_starts_with($decodedReturnUrl, '//')
+            || $decodedReturnUrl[0] !== '/'
+        ) {
             return false;
         }
 
         $parts = parse_url($returnUrl);
+        $decodedParts = parse_url($decodedReturnUrl);
 
-        return is_array($parts) && !isset($parts['scheme'], $parts['host']);
+        return is_array($parts)
+            && is_array($decodedParts)
+            && !isset($parts['scheme'])
+            && !isset($parts['host'])
+            && !isset($decodedParts['scheme'])
+            && !isset($decodedParts['host']);
+    }
+
+    private function containsUnsafeReturnUrlCharacters(string $returnUrl): bool
+    {
+        return str_contains($returnUrl, '\\')
+            || preg_match('/[\x00-\x1F\x7F]/', $returnUrl) === 1;
     }
 
     private function buildTypo3LogoutUrl(

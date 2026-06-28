@@ -550,7 +550,7 @@
             </trans-unit>
             <trans-unit id="constants.glossaryPid">
                 <source>Glossary terms page ID</source>
-                <target>ID de la p?gina de t?rminos del glosario</target>
+                <target>ID de la página de términos del glosario</target>
             </trans-unit>
         </body>
     </file>

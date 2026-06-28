@@ -8,7 +8,8 @@
 - Adds TYPO3 FormProtection token validation to backend configuration, approval, text translation and file translation POST actions.
 - Adds server-side document upload validation for TXT, PDF, DOCX and PPTX with a 10 MiB per-file limit, MIME checks and magic-byte checks.
 - Moves executable frontend inline JavaScript into `Resources/Public/Javascript/frontend-controls.js`; Fluid templates keep JSON data containers only.
-- Documents the remaining public-download risk under `fileadmin/user_upload/translated/`.
+- Serves translated documents via short-lived HMAC-signed download tokens from private var/transient storage instead of the public fileadmin path; adds a per-frontend-user/IP translation rate limit and a `ppl:deepl-v3:cleanup-downloads` command.
+- Closes the previous public-download risk under `fileadmin/user_upload/translated/`: translated files are no longer written to the public path and are downloaded only through a private signed token.
 - Updates release documentation to reference HDA DeepL V2 Translate as `hda-ppl/hda-deepl-v2-translate` and documents that V3 builds on the HDA V2 product and workflow foundation without depending on historical V2 package names.
 - Removes TYPO3 13 scanner findings for direct upload-size calls, legacy Page TSconfig registration and deprecated plugin-type constants while keeping the existing frontend plugin signatures stable.
 - Updates release documentation for TYPO3 v13 LTS with the official TYPO3 documentation link: https://docs.typo3.org/m/typo3/tutorial-getting-started/13.4/en-us/Installation/SystemRequirements/Index.html.

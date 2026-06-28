@@ -12,6 +12,7 @@ use Ppl\PplDeeplV3Translate\Service\DeeplTranslationService;
 use Ppl\PplDeeplV3Translate\Service\DocumentUploadValidationService;
 use Ppl\PplDeeplV3Translate\Service\Api\V3RequestAdapter;
 use Ppl\PplDeeplV3Translate\Service\FrontendAccessService;
+use Ppl\PplDeeplV3Translate\Service\TranslatedDownloadStorage;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
@@ -102,16 +103,14 @@ class DeeplFileController extends ActionController
                 $errorMessage = $this->translate('error.sameLanguage');
             } else {
                 $safeOriginalName = $uploadValidationService->sanitizeOriginalFileName($originalName);
-                $fileName = 'translated_' . date('Ymd-His') . '_' . $safeOriginalName;
-                $targetDir = 'fileadmin/user_upload/translated/';
-                $absoluteTargetDir = GeneralUtility::getFileAbsFileName($targetDir);
+                $displayName = 'translated_' . date('Ymd-His') . '_' . $safeOriginalName;
+                $downloadStorage = GeneralUtility::makeInstance(TranslatedDownloadStorage::class);
+                $downloadStorage->sweepExpired();
 
-                if (!is_dir($absoluteTargetDir)) {
-                    GeneralUtility::mkdir_deep($absoluteTargetDir);
-                }
-
-                $sourcePath = $absoluteTargetDir . 'original_' . $fileName;
-                $targetPath = $absoluteTargetDir . $fileName;
+                $storageDir = $downloadStorage->getStorageDirectory();
+                $storageFileName = $downloadStorage->buildStorageFileName($safeOriginalName);
+                $sourcePath = $storageDir . 'src_' . $storageFileName;
+                $targetPath = $downloadStorage->getStoragePath($storageFileName);
 
                 if (!move_uploaded_file($tmpFile, $sourcePath)) {
                     $errorMessage = $this->translate('error.uploadSaveFailed');
@@ -126,15 +125,13 @@ class DeeplFileController extends ActionController
                             $selectedGlossaryId
                         );
 
-                        $translatedFilePath = '/' . $targetDir . $fileName;
-                        $translatedFileName = $fileName;
-
-                        if (file_exists($sourcePath)) {
-                            unlink($sourcePath);
-                        }
+                        $translatedFilePath = $this->buildDownloadUrl(
+                            $downloadStorage->createToken($storageFileName, $displayName)
+                        );
+                        $translatedFileName = $displayName;
                     } catch (\Throwable $exception) {
                         $errorMessage = $this->translate('error.documentTranslation', [$exception->getMessage()]);
-
+                    } finally {
                         if (file_exists($sourcePath)) {
                             unlink($sourcePath);
                         }
@@ -177,6 +174,35 @@ class DeeplFileController extends ActionController
         ]);
 
         return $this->htmlResponse();
+    }
+
+    public function downloadAction(): ResponseInterface
+    {
+        $frontendAccessService = GeneralUtility::makeInstance(FrontendAccessService::class);
+        $accessResponse = $frontendAccessService->buildAccessResponse((array)$this->settings, $this->request, $this->uriBuilder);
+        if ($accessResponse !== null) {
+            return $accessResponse;
+        }
+
+        $token = $this->request->hasArgument('token') ? (string)$this->request->getArgument('token') : '';
+        $resolved = GeneralUtility::makeInstance(TranslatedDownloadStorage::class)->resolveToken($token);
+        if ($resolved === null) {
+            return $this->responseFactory->createResponse(404)
+                ->withHeader('Content-Type', 'text/plain; charset=utf-8')
+                ->withBody($this->streamFactory->createStream($this->translate('error.downloadNotFound')));
+        }
+
+        return $this->responseFactory->createResponse()
+            ->withHeader('Content-Type', 'application/octet-stream')
+            ->withHeader('Content-Disposition', 'attachment; filename="' . $resolved['name'] . '"')
+            ->withHeader('Content-Length', (string)((int)filesize($resolved['path'])))
+            ->withHeader('X-Content-Type-Options', 'nosniff')
+            ->withBody($this->streamFactory->createStreamFromFile($resolved['path']));
+    }
+
+    private function buildDownloadUrl(string $token): string
+    {
+        return $this->uriBuilder->reset()->uriFor('download', ['token' => $token], 'DeeplFile');
     }
 
     private function translate(string $key, array $arguments = []): string

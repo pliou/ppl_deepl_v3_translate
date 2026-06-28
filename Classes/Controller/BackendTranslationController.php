@@ -9,6 +9,7 @@ use Ppl\PplDeeplV3Translate\Service\DeeplLanguageService;
 use Ppl\PplDeeplV3Translate\Service\DeeplStyleRuleService;
 use Ppl\PplDeeplV3Translate\Service\DeeplTranslationService;
 use Ppl\PplDeeplV3Translate\Service\DocumentUploadValidationService;
+use Ppl\PplDeeplV3Translate\Service\TranslatedDownloadStorage;
 use Ppl\PplDeeplV3Requests\Service\DeeplConfigurationService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -17,6 +18,7 @@ use TYPO3\CMS\Backend\Attribute\AsController;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\FormProtection\FormProtectionFactory;
+use TYPO3\CMS\Core\Http\Response;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
@@ -127,6 +129,28 @@ final class BackendTranslationController
         return $moduleTemplate->renderResponse('Backend/Control');
     }
 
+    public function downloadAction(ServerRequestInterface $request): ResponseInterface
+    {
+        $token = (string)($request->getQueryParams()['dl'] ?? '');
+        $resolved = GeneralUtility::makeInstance(TranslatedDownloadStorage::class)->resolveToken($token);
+        if ($resolved === null) {
+            $response = new Response('php://temp', 404, ['Content-Type' => ['text/plain; charset=utf-8']]);
+            $response->getBody()->write($this->translate('error.downloadNotFound'));
+
+            return $response;
+        }
+
+        $response = new Response('php://temp', 200, [
+            'Content-Type' => ['application/octet-stream'],
+            'Content-Disposition' => ['attachment; filename="' . $resolved['name'] . '"'],
+            'Content-Length' => [(string)((int)filesize($resolved['path']))],
+            'X-Content-Type-Options' => ['nosniff'],
+        ]);
+        $response->getBody()->write((string)file_get_contents($resolved['path']));
+
+        return $response;
+    }
+
     private function handleTextTranslation(array $body, string $authKey): array
     {
         $data = $this->getDefaultTextData();
@@ -207,16 +231,14 @@ final class BackendTranslationController
             $data['errorMessage'] = $this->translate('error.sameLanguage');
         } else {
             $safeOriginalName = $this->uploadValidationService->sanitizeOriginalFileName($originalName);
-            $fileName = 'translated_' . date('Ymd-His') . '_' . $safeOriginalName;
-            $targetDir = 'fileadmin/user_upload/translated/';
-            $absoluteTargetDir = GeneralUtility::getFileAbsFileName($targetDir);
+            $displayName = 'translated_' . date('Ymd-His') . '_' . $safeOriginalName;
+            $downloadStorage = GeneralUtility::makeInstance(TranslatedDownloadStorage::class);
+            $downloadStorage->sweepExpired();
 
-            if (!is_dir($absoluteTargetDir)) {
-                GeneralUtility::mkdir_deep($absoluteTargetDir);
-            }
-
-            $sourcePath = $absoluteTargetDir . 'original_' . $fileName;
-            $targetPath = $absoluteTargetDir . $fileName;
+            $storageDir = $downloadStorage->getStorageDirectory();
+            $storageFileName = $downloadStorage->buildStorageFileName($safeOriginalName);
+            $sourcePath = $storageDir . 'src_' . $storageFileName;
+            $targetPath = $downloadStorage->getStoragePath($storageFileName);
 
             try {
                 $uploadedFile->moveTo($sourcePath);
@@ -239,8 +261,11 @@ final class BackendTranslationController
                     $data['language_ziel'],
                     $data['glossary_id']
                 );
-                $data['translatedFilePath'] = '/' . $targetDir . $fileName;
-                $data['translatedFileName'] = $fileName;
+                $data['translatedFilePath'] = (string)$this->uriBuilder->buildUriFromRoute(
+                    'ppl_deepl_v3_file_translation.download',
+                    ['dl' => $downloadStorage->createToken($storageFileName, $displayName)]
+                );
+                $data['translatedFileName'] = $displayName;
             } catch (\Throwable $exception) {
                 $data['errorMessage'] = $this->translate('error.documentTranslation', [$exception->getMessage()]);
             } finally {

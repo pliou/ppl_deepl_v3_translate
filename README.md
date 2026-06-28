@@ -176,7 +176,9 @@ Existing files from `var/ppl_deepl_v3_translate/` are migrated by the request se
 - Frontend access is delegated to TYPO3/felogin. This package no longer performs direct frontend-user or backend-user password checks and no longer sets a PPL frontend-login cookie.
 - Backend POST actions use TYPO3 FormProtection tokens for configuration saves, approval writes, backend text translation and backend file translation.
 - File uploads are checked by size, extension, MIME type and magic bytes. Failed validation stops before a DeepL document translation request.
-- Translated files are still written below `fileadmin/user_upload/translated/` for download in this release line. That path is publicly reachable in typical TYPO3 webroots, so private signed downloads remain an open hardening task.
+- Translated files are no longer written below the public `fileadmin/user_upload/translated/` path. They are served from private var/transient storage through short-lived HMAC-signed download tokens, so the previous public-download exposure is closed.
+- Frontend translation requests are protected by a per-frontend-user/IP rate limit to throttle abusive translation traffic.
+- Expired translated downloads are removed by the `ppl:deepl-v3:cleanup-downloads` command; register it as a TYPO3 scheduler task or system cron job to purge stale signed-token files regularly.
 - The translate package does not directly depend on `deeplcom/deepl-php`.
 - The translate package expects all V3 HTTP behavior to go through `ppl_deepl_v3_requests`.
 

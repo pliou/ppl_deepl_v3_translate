@@ -55,12 +55,14 @@
             <trans-unit id="error.missingText"><source>Please enter text.</source></trans-unit>
             <trans-unit id="error.sameLanguage"><source>Target language must not be the source language.</source></trans-unit>
             <trans-unit id="error.missingAuthKey.v3"><source>No DeepL auth key is configured.</source></trans-unit>
+            <trans-unit id="error.rateLimited"><source>Too many translation requests. Please wait a moment and try again.</source></trans-unit>
             <trans-unit id="error.translation"><source>Translation error: %s</source></trans-unit>
             <trans-unit id="error.invalidFileType"><source>Unsupported file type. Allowed: TXT, PDF, DOCX, PPTX.</source></trans-unit>
             <trans-unit id="error.invalidUpload"><source>The uploaded file is empty or could not be read.</source></trans-unit>
             <trans-unit id="error.fileTooLarge"><source>The uploaded file is larger than the configured upload limit.</source></trans-unit>
             <trans-unit id="error.fileContentMismatch"><source>The uploaded file content does not match the selected file type.</source></trans-unit>
             <trans-unit id="error.uploadSaveFailed"><source>The uploaded file could not be saved.</source></trans-unit>
+            <trans-unit id="error.downloadNotFound"><source>The download link is invalid or has expired.</source></trans-unit>
             <trans-unit id="error.documentTranslation"><source>Document translation error: %s</source></trans-unit>
             <trans-unit id="access.loginRequired"><source>Login required</source></trans-unit>
             <trans-unit id="access.invalidLogoutRequest"><source>The logout request could not be verified.</source></trans-unit>

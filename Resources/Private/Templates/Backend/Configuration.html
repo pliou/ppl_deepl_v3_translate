@@ -136,7 +136,15 @@
                                                                     <span>
                                                                         <strong>{language.name}</strong>
                                                                         <br>
-                                                                        <span class="ppl-deepl-v3__muted">{language.code}</span>
+                                                                        <span class="ppl-deepl-v3__muted">
+                                                                            {language.code}
+                                                                            <f:if condition="{language.supportsSource}">
+                                                                                | <f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:field.sourceLanguage" />
+                                                                            </f:if>
+                                                                            <f:if condition="{language.supportsTarget}">
+                                                                                | <f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:field.targetLanguage" />
+                                                                            </f:if>
+                                                                        </span>
                                                                     </span>
                                                                 </label>
                                                             </f:for>
@@ -157,7 +165,15 @@
                                                                     <span>
                                                                         <strong>{language.name}</strong>
                                                                         <br>
-                                                                        <span class="ppl-deepl-v3__muted">{language.code}</span>
+                                                                        <span class="ppl-deepl-v3__muted">
+                                                                            {language.code}
+                                                                            <f:if condition="{language.supportsSource}">
+                                                                                | <f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:field.sourceLanguage" />
+                                                                            </f:if>
+                                                                            <f:if condition="{language.supportsTarget}">
+                                                                                | <f:translate key="LLL:EXT:ppl_deepl_v3_translate/Resources/Private/Language/locallang.xlf:field.targetLanguage" />
+                                                                            </f:if>
+                                                                        </span>
                                                                     </span>
                                                                 </label>
                                                             </f:for>

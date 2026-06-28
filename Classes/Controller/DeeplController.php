@@ -11,6 +11,7 @@ use Ppl\PplDeeplV3Translate\Service\DeeplStyleRuleService;
 use Ppl\PplDeeplV3Translate\Service\DeeplTranslationService;
 use Ppl\PplDeeplV3Translate\Service\Api\V3RequestAdapter;
 use Ppl\PplDeeplV3Translate\Service\FrontendAccessService;
+use Ppl\PplDeeplV3Translate\Service\TranslationRateLimiter;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
@@ -82,7 +83,10 @@ class DeeplController extends ActionController
         }
         $useGlossary = false;
 
-        if ($this->request->hasArgument('textarea')) {
+        // Defense in depth: only a real POST submit may trigger the (paid) DeepL call. The form already
+        // posts with an Extbase request token; this additionally rejects a crafted GET that merely carries
+        // a "textarea" argument, so it cannot burn API quota.
+        if ($this->request->getMethod() === 'POST' && $this->request->hasArgument('textarea')) {
             $inputText = trim((string)$this->request->getArgument('textarea'));
 
             $selectedGlossaryId = $this->request->hasArgument('glossary_id')
@@ -110,6 +114,8 @@ class DeeplController extends ActionController
                 $translationError = $this->translate('error.sameLanguage');
             } elseif ($authKey === '') {
                 $translationError = $this->translate('error.missingAuthKey.v3');
+            } elseif (!GeneralUtility::makeInstance(TranslationRateLimiter::class)->allow($this->request)) {
+                $translationError = $this->translate('error.rateLimited');
             } else {
                 try {
                     $translatedText = $translationService->translateText(

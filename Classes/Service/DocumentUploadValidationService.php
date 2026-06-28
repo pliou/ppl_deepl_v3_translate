@@ -150,7 +150,7 @@ final class DocumentUploadValidationService
     private function zipContains(string $path, string $entryName): bool
     {
         if (!class_exists(\ZipArchive::class)) {
-            return true;
+            return false;
         }
 
         $zip = new \ZipArchive();
